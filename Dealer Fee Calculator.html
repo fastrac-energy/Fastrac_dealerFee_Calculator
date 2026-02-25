@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Subcontractor Hub Proposal Audit</title>
+  <style>
+    :root { --bg:#0b1220; --card:#121a2b; --muted:#9bb0d1; --text:#e8f0ff; --accent:#5aa2ff; --danger:#ff5a7a; --ok:#35d07f; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg, #0b1220, #070b14); color:var(--text); }
+    header { padding: 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    h1 { margin:0; font-size: 18px; letter-spacing:.2px; }
+    .sub { margin-top:6px; color:var(--muted); font-size: 12px; line-height: 1.4; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
+    .grid { display:grid; gap:14px; grid-template-columns: 1.15fr .85fr; }
+    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+
+    .card { background: rgba(18,26,43,.9); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px; padding: 14px; box-shadow: 0 10px 25px rgba(0,0,0,.25); }
+    .card h2 { margin:0 0 10px; font-size: 14px; color: #dbe8ff; }
+    .row { display:flex; gap:10px; flex-wrap: wrap; align-items: end; }
+    label { display:block; font-size: 12px; color:var(--muted); margin-bottom: 6px; }
+    input, select, button {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--text);
+      padding: 10px 10px;
+      border-radius: 10px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: rgba(90,162,255,.65); box-shadow: 0 0 0 3px rgba(90,162,255,.18); }
+    .field { flex:1; min-width: 180px; }
+    .field.small { min-width: 140px; flex: .6; }
+    .field.tiny { min-width: 110px; flex: .45; }
+    .btn { cursor:pointer; font-weight: 700; letter-spacing:.2px; background: rgba(90,162,255,.18); border-color: rgba(90,162,255,.45); }
+    .btn:hover { background: rgba(90,162,255,.24); }
+    .btn.danger { background: rgba(255,90,122,.16); border-color: rgba(255,90,122,.45); }
+    .btn.danger:hover { background: rgba(255,90,122,.22); }
+    .btn.ok { background: rgba(53,208,127,.16); border-color: rgba(53,208,127,.45); }
+    .btn.ok:hover { background: rgba(53,208,127,.22); }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 8px; line-height: 1.35; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { border-bottom: 1px solid rgba(255,255,255,.08); padding: 8px 8px; vertical-align: middle; }
+    th { text-align: left; color: #cfe0ff; font-weight: 800; position: sticky; top:0; background: rgba(18,26,43,.98); z-index: 1; }
+    td input { padding: 8px 8px; border-radius: 9px; }
+    .table-wrap { max-height: 420px; overflow: auto; border-radius: 12px; border:1px solid rgba(255,255,255,.08); }
+    .mono { font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; border:1px solid rgba(255,255,255,.14); color:#dbe8ff; }
+    .pill.ok { border-color: rgba(53,208,127,.45); color: #bff7db; }
+    .pill.bad { border-color: rgba(255,90,122,.55); color: #ffd2dc; }
+    .out { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 10px; }
+    @media (max-width: 520px) { .out { grid-template-columns: 1fr; } }
+    .kv { padding: 10px; border:1px solid rgba(255,255,255,.08); border-radius: 12px; background: rgba(255,255,255,.03); }
+    .kv .k { color: var(--muted); font-size: 12px; }
+    .kv .v { margin-top: 6px; font-size: 16px; font-weight: 900; }
+    footer { padding: 10px 16px 18px; color: var(--muted); font-size: 12px; text-align:center; }
+    .right { text-align:right; }
+    code.inline { background: rgba(255,255,255,.06); padding: 2px 6px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding:0 16px;">
+    <h1>Subcontractor Hub Proposal Audit</h1>
+    <div class="sub">
+      Effective fee = <code class="inline">Dealer Fee %</code> + <code class="inline">Markup %</code>.
+      Defaults: Sungage/Sunlight/Goodleap markup = 2.00% (editable).
+    </div>
+  </div>
+</header>
+
+<div class="wrap grid">
+  <section class="card">
+    <h2>Rates Table (edit / import)</h2>
+
+    <div class="row">
+      <div class="field">
+        <label>Quick filter (Lender / Program)</label>
+        <input id="filter" placeholder="Type to filter rows..." />
+      </div>
+      <div class="field small">
+        <label>Match tolerance ($)</label>
+        <input id="tolerance" type="number" step="0.01" value="5.00" />
+      </div>
+      <div class="field tiny">
+        <label>&nbsp;</label>
+        <button class="btn ok" id="addRow">+ Add Row</button>
+      </div>
+      <div class="field tiny">
+        <label>&nbsp;</label>
+        <button class="btn" id="saveRates">Save</button>
+      </div>
+      <div class="field tiny">
+        <label>&nbsp;</label>
+        <button class="btn danger" id="resetRates">Reset</button>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <div class="field">
+        <label>Import Rates CSV</label>
+        <input id="csvFile" type="file" accept=".csv" />
+      </div>
+      <div class="field tiny">
+        <label>&nbsp;</label>
+        <button class="btn" id="exportCsv">Export CSV</button>
+      </div>
+      <div class="field tiny">
+        <label>&nbsp;</label>
+        <button class="btn" id="downloadTemplate">CSV Template</button>
+      </div>
+    </div>
+
+    <div class="hint">
+      CSV columns: <code class="inline">lender,program,term,apr,dealerFee,markup</code>
+      (percents as numbers like 20.99). Leave markup blank to use defaults.
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <div class="field small">
+        <label>Default Markup – Sungage</label>
+        <input id="mkSungage" type="number" step="0.01" value="2.00" />
+      </div>
+      <div class="field small">
+        <label>Default Markup – Sunlight</label>
+        <input id="mkSunlight" type="number" step="0.01" value="2.00" />
+      </div>
+      <div class="field small">
+        <label>Default Markup – Goodleap</label>
+        <input id="mkGoodleap" type="number" step="0.01" value="2.00" />
+      </div>
+      <div class="field small">
+        <label>Default Markup – Other</label>
+        <input id="mkOther" type="number" step="0.01" value="0.00" />
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top: 12px;">
+      <table id="ratesTable">
+        <thead>
+          <tr>
+            <th style="min-width:140px;">Lender</th>
+            <th style="min-width:170px;">Program / Notes</th>
+            <th class="right" style="min-width:80px;">Term</th>
+            <th class="right" style="min-width:90px;">APR %</th>
+            <th class="right" style="min-width:130px;">Dealer Fee %</th>
+            <th class="right" style="min-width:110px;">Markup %</th>
+            <th class="right" style="min-width:150px;">Effective Fee %</th>
+            <th style="min-width:80px;">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody id="ratesBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Audit Calculator</h2>
+
+    <div class="row">
+      <div class="field">
+        <label>Subtotal (net to you)</label>
+        <input id="subtotal" type="number" step="0.01" placeholder="e.g. 48205" />
+      </div>
+      <div class="field">
+        <label>Lender</label>
+        <select id="lender"></select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px;">
+      <div class="field small">
+        <label>Term (yrs)</label>
+        <select id="term"></select>
+      </div>
+      <div class="field.small field small">
+        <label>APR (%)</label>
+        <select id="apr"></select>
+      </div>
+      <div class="field">
+        <label>Proposal Gross (from Hub)</label>
+        <input id="proposalGross" type="number" step="0.01" placeholder="e.g. 61011.26" />
+      </div>
+    </div>
+
+    <div class="hint">
+      Expected Gross = Subtotal ÷ (1 − Effective Fee%). Enter Proposal Gross to flag mismatches.
+    </div>
+
+    <div class="out">
+      <div class="kv"><div class="k">Dealer Fee % (table)</div><div class="v mono" id="dealerFeePct">—</div></div>
+      <div class="kv"><div class="k">Markup %</div><div class="v mono" id="markupPct">—</div></div>
+      <div class="kv"><div class="k">Effective Fee %</div><div class="v mono" id="effFee">—</div></div>
+      <div class="kv"><div class="k">Expected Gross</div><div class="v mono" id="expectedGross">—</div></div>
+      <div class="kv"><div class="k">Expected Dealer Fee $</div><div class="v mono" id="dealerFeeDollars">—</div></div>
+      <div class="kv">
+        <div class="k">Difference (Proposal − Expected)</div>
+        <div class="v mono" id="diff">—</div>
+        <div style="margin-top:8px;" id="status"></div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px;">
+      <div class="field tiny"><button class="btn ok" id="recalc">Recalculate</button></div>
+      <div class="field"><button class="btn" id="copySummary">Copy Audit Summary</button></div>
+    </div>
+
+    <div class="hint" id="summaryHint"></div>
+  </section>
+</div>
+
+<footer>Save rates locally in your browser. Deploy as a single file on GitHub Pages.</footer>
+
+<script>
+  // ---------- Utilities ----------
+  const fmtMoney = (n) => (isFinite(n) ? n.toLocaleString(undefined, {style:'currency', currency:'USD'}) : '—');
+  const fmtPct = (n) => (isFinite(n) ? (Math.round(n*100)/100).toFixed(2) + '%' : '—');
+  const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+  const parseNum = (v) => {
+    const n = Number(String(v).replace(/[^0-9.\-]/g,''));
+    return isFinite(n) ? n : NaN;
+  };
+  const uniq = (arr) => [...new Set(arr)].filter(Boolean);
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+  // ---------- Default markup rules ----------
+  function defaultMarkupForLender(lenderRaw) {
+    const lender = String(lenderRaw || '').trim().toLowerCase();
+    const mkS = parseNum(document.getElementById('mkSungage').value);
+    const mkL = parseNum(document.getElementById('mkSunlight').value);
+    const mkG = parseNum(document.getElementById('mkGoodleap').value);
+    const mkO = parseNum(document.getElementById('mkOther').value);
+
+    if (lender.includes('sungage')) return isFinite(mkS) ? mkS : 0;
+    if (lender.includes('sunlight')) return isFinite(mkL) ? mkL : 0;
+    if (lender.includes('goodleap') || lender.includes('good leap')) return isFinite(mkG) ? mkG : 0;
+    return isFinite(mkO) ? mkO : 0;
+  }
+
+  // Effective fee = dealer fee + markup
+  function effectiveFee(row) {
+    const dealerFee = isFinite(row.dealerFee) ? row.dealerFee : 0;
+    const mk = isFinite(row.markup) ? row.markup : defaultMarkupForLender(row.lender);
+    return round2(dealerFee + mk);
+  }
+
+  // ---------- Data model ----------
+  const DEFAULT_RATES = [
+    { lender:'Sungage', program:'Sunrise (example)', term:25, apr:5.99, dealerFee:20.99, markup:NaN },
+    { lender:'Sunlight', program:'Standard (example)', term:20, apr:11.99, dealerFee:2.01, markup:NaN },
+    { lender:'Goodleap', program:'Standard (example)', term:7, apr:7.99, dealerFee:16.50, markup:NaN },
+  ];
+
+  const STORAGE_KEY = 'proposal_audit_rates_v1';
+  let rates = [];
+
+  function loadRates() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) { rates = parsed; return; }
+      }
+    } catch (_) {}
+    rates = structuredClone(DEFAULT_RATES);
+  }
+
+  function saveRates() { localStorage.setItem(STORAGE_KEY, JSON.stringify(rates)); }
+
+  function normalizeRow(r) {
+    return {
+      lender: (r.lender ?? '').toString().trim(),
+      program: (r.program ?? '').toString().trim(),
+      term: parseNum(r.term),
+      apr: parseNum(r.apr),
+      dealerFee: parseNum(r.dealerFee),
+      markup: parseNum(r.markup), // may be NaN to use defaultMarkupForLender
+    };
+  }
+
+  // ---------- Table render ----------
+  function rowMatchesFilter(row, f) {
+    if (!f) return true;
+    const s = (row.lender + ' ' + row.program).toLowerCase();
+    return s.includes(f.toLowerCase());
+  }
+
+  function cellInput(idx, key, value, type='text', step=null, placeholder='') {
+    const td = document.createElement('td');
+    if (['term','apr','dealerFee','markup'].includes(key)) td.classList.add('right');
+
+    const input = document.createElement('input');
+    input.type = type;
+    if (step) input.step = step;
+    input.placeholder = placeholder;
+    input.value = (value ?? '');
+    input.oninput = () => {
+      rates[idx][key] = (type === 'number') ? parseNum(input.value) : input.value;
+      renderAll();
+    };
+    td.appendChild(input);
+    return td;
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('ratesBody');
+    tbody.innerHTML = '';
+    const f = document.getElementById('filter').value.trim();
+
+    rates.forEach((raw, idx) => {
+      const row = normalizeRow(raw);
+      if (!rowMatchesFilter(row, f)) return;
+
+      const tr = document.createElement('tr');
+      tr.appendChild(cellInput(idx, 'lender', row.lender, 'text'));
+      tr.appendChild(cellInput(idx, 'program', row.program, 'text'));
+      tr.appendChild(cellInput(idx, 'term', row.term, 'number', '1'));
+      tr.appendChild(cellInput(idx, 'apr', row.apr, 'number', '0.01'));
+      tr.appendChild(cellInput(idx, 'dealerFee', row.dealerFee, 'number', '0.01'));
+
+      const mkPlaceholder = defaultMarkupForLender(row.lender).toFixed(2);
+      tr.appendChild(cellInput(idx, 'markup', isFinite(row.markup) ? row.markup : '', 'number', '0.01', mkPlaceholder));
+
+      const eff = effectiveFee(row);
+      const tdEff = document.createElement('td');
+      tdEff.className = 'right mono';
+      tdEff.textContent = fmtPct(eff);
+      tr.appendChild(tdEff);
+
+      const tdBtn = document.createElement('td');
+      const del = document.createElement('button');
+      del.className = 'btn danger';
+      del.textContent = 'Delete';
+      del.onclick = () => { rates.splice(idx,1); renderAll(); };
+      tdBtn.appendChild(del);
+      tr.appendChild(tdBtn);
+
+      tbody.appendChild(tr);
+    });
+
+    renderDropdowns();
+  }
+
+  // ---------- Dropdowns ----------
+  function renderDropdowns() {
+    const lenderSel = document.getElementById('lender');
+    const termSel = document.getElementById('term');
+    const aprSel = document.getElementById('apr');
+
+    const lenders = uniq(rates.map(r => (r.lender ?? '').toString().trim())).sort();
+    const prevLender = lenderSel.value;
+
+    lenderSel.innerHTML = lenders.map(l => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join('');
+    if (lenders.includes(prevLender)) lenderSel.value = prevLender;
+
+    const lender = lenderSel.value;
+    const lenderRows = rates.map(normalizeRow).filter(r => r.lender === lender);
+
+    const terms = uniq(lenderRows.map(r => r.term)).sort((a,b)=>a-b);
+    const prevTerm = termSel.value;
+    termSel.innerHTML = terms.map(t => `<option value="${t}">${t}</option>`).join('');
+    if (terms.map(String).includes(prevTerm)) termSel.value = prevTerm;
+
+    const term = parseNum(termSel.value);
+    const termRows = lenderRows.filter(r => r.term === term);
+
+    const aprs = uniq(termRows.map(r => r.apr)).sort((a,b)=>a-b);
+    const prevApr = aprSel.value;
+    aprSel.innerHTML = aprs.map(a => `<option value="${a}">${Number(a).toFixed(2)}</option>`).join('');
+    if (aprs.map(String).includes(prevApr)) aprSel.value = prevApr;
+
+    calc();
+  }
+
+  function findRate(lender, term, apr) {
+    const t = parseNum(term), a = parseNum(apr);
+    return rates.map(normalizeRow).find(r =>
+      r.lender === lender &&
+      r.term === t &&
+      Number(r.apr).toFixed(2) === Number(a).toFixed(2)
+    ) || null;
+  }
+
+  // ---------- Calculator ----------
+  function calc() {
+    const subtotal = parseNum(document.getElementById('subtotal').value);
+    const lender = document.getElementById('lender').value;
+    const term = document.getElementById('term').value;
+    const apr = document.getElementById('apr').value;
+    const proposalGross = parseNum(document.getElementById('proposalGross').value);
+    const tol = Math.max(0, parseNum(document.getElementById('tolerance').value) || 0);
+
+    const row = findRate(lender, term, apr);
+
+    const dealerFeePctEl = document.getElementById('dealerFeePct');
+    const markupPctEl = document.getElementById('markupPct');
+    const effFeeEl = document.getElementById('effFee');
+    const expGrossEl = document.getElementById('expectedGross');
+    const feeDolEl = document.getElementById('dealerFeeDollars');
+    const diffEl = document.getElementById('diff');
+    const statusEl = document.getElementById('status');
+    const summaryEl = document.getElementById('summaryHint');
+    statusEl.innerHTML = '';
+    summaryEl.textContent = '';
+
+    if (!row) {
+      dealerFeePctEl.textContent = '—';
+      markupPctEl.textContent = '—';
+      effFeeEl.textContent = '—';
+      expGrossEl.textContent = '—';
+      feeDolEl.textContent = '—';
+      diffEl.textContent = '—';
+      return;
+    }
+
+    const mk = isFinite(row.markup) ? row.markup : defaultMarkupForLender(row.lender);
+    const eff = effectiveFee(row);
+
+    dealerFeePctEl.textContent = fmtPct(row.dealerFee);
+    markupPctEl.textContent = fmtPct(mk);
+    effFeeEl.textContent = fmtPct(eff);
+
+    let expectedGross = NaN, feeDol = NaN;
+    if (isFinite(subtotal) && subtotal > 0 && isFinite(eff)) {
+      expectedGross = round2(subtotal / (1 - (eff/100)));
+      feeDol = round2(expectedGross - subtotal);
+    }
+
+    expGrossEl.textContent = isFinite(expectedGross) ? fmtMoney(expectedGross) : '—';
+    feeDolEl.textContent   = isFinite(feeDol) ? fmtMoney(feeDol) : '—';
+
+    let diff = NaN;
+    if (isFinite(proposalGross) && proposalGross > 0 && isFinite(expectedGross)) {
+      diff = round2(proposalGross - expectedGross);
+      diffEl.textContent = fmtMoney(diff);
+
+      const ok = Math.abs(diff) <= tol;
+      const pill = document.createElement('span');
+      pill.className = 'pill ' + (ok ? 'ok' : 'bad');
+      pill.textContent = ok ? `MATCH (±${fmtMoney(tol)})` : 'MISMATCH';
+      statusEl.appendChild(pill);
+
+      const detail = document.createElement('div');
+      detail.className = 'hint';
+      detail.style.marginTop = '8px';
+      detail.textContent = ok
+        ? 'Proposal gross matches expected gross within tolerance.'
+        : 'Proposal gross differs from expected gross. Verify lender/term/APR selection and markup defaults.';
+      statusEl.appendChild(detail);
+    } else {
+      diffEl.textContent = '—';
+    }
+
+    const parts = [];
+    if (isFinite(subtotal)) parts.push(`Subtotal ${fmtMoney(subtotal)}`);
+    parts.push(`${row.lender} • ${row.program || 'Program'} • ${row.term}yr • ${Number(row.apr).toFixed(2)}%`);
+    parts.push(`DealerFee ${fmtPct(row.dealerFee)} • Markup ${fmtPct(mk)} • Effective ${fmtPct(eff)}`);
+    if (isFinite(expectedGross)) parts.push(`ExpectedGross ${fmtMoney(expectedGross)} • Fee$ ${fmtMoney(feeDol)}`);
+    if (isFinite(proposalGross)) parts.push(`ProposalGross ${fmtMoney(proposalGross)} • Diff ${isFinite(diff)?fmtMoney(diff):'—'}`);
+    summaryEl.textContent = parts.join(' | ');
+  }
+
+  // ---------- CSV import/export ----------
+  function csvEsc(s) {
+    const str = String(s ?? '');
+    if (/[",\n]/.test(str)) return '"' + str.replace(/"/g,'""') + '"';
+    return str;
+  }
+
+  function exportRatesCsv() {
+    const header = ['lender','program','term','apr','dealerFee','markup'];
+    const lines = [header.join(',')];
+    rates.map(normalizeRow).forEach(r => {
+      const mk = isFinite(r.markup) ? r.markup : '';
+      lines.push([csvEsc(r.lender), csvEsc(r.program), r.term, r.apr, r.dealerFee, mk].join(','));
+    });
+    downloadBlob(lines.join('\n'), 'rates.csv', 'text/csv');
+  }
+
+  function downloadTemplate() {
+    const t =
+`lender,program,term,apr,dealerFee,markup
+Sungage,Sunrise,25,5.99,20.99,
+Sunlight,Standard,20,11.99,2.01,
+Goodleap,Standard,7,7.99,16.50,
+`;
+    downloadBlob(t, 'rates_template.csv', 'text/csv');
+  }
+
+  function downloadBlob(content, filename, type) {
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function parseCsv(text) {
+    const rows = [];
+    let cur = [], field = '', inQuotes = false;
+    for (let i=0;i<text.length;i++) {
+      const ch = text[i];
+      if (inQuotes) {
+        if (ch === '"' && text[i+1] === '"') { field += '"'; i++; }
+        else if (ch === '"') inQuotes = false;
+        else field += ch;
+      } else {
+        if (ch === '"') inQuotes = true;
+        else if (ch === ',') { cur.push(field); field = ''; }
+        else if (ch === '\n') { cur.push(field); rows.push(cur); cur=[]; field=''; }
+        else if (ch === '\r') {}
+        else field += ch;
+      }
+    }
+    cur.push(field); rows.push(cur);
+    return rows.filter(r => r.some(x => String(x).trim() !== ''));
+  }
+
+  function importCsv(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const rows = parseCsv(reader.result);
+      if (!rows.length) return;
+      const head = rows[0].map(h => String(h).trim().toLowerCase());
+      const idx = (name) => head.indexOf(name.toLowerCase());
+      const required = ['lender','program','term','apr','dealerfee','markup'];
+      const ok = required.every(k => idx(k) !== -1);
+      if (!ok) { alert('CSV header must include: ' + required.join(', ')); return; }
+
+      const next = [];
+      for (let r=1; r<rows.length; r++) {
+        const row = rows[r];
+        next.push({
+          lender: row[idx('lender')] ?? '',
+          program: row[idx('program')] ?? '',
+          term: parseNum(row[idx('term')]),
+          apr: parseNum(row[idx('apr')]),
+          dealerFee: parseNum(row[idx('dealerfee')]),
+          markup: parseNum(row[idx('markup')]), // blank => NaN => defaults apply
+        });
+      }
+      rates = next;
+      renderAll();
+    };
+    reader.readAsText(file);
+  }
+
+  function renderAll() { renderTable(); calc(); }
+
+  // ---------- Events ----------
+  document.getElementById('filter').addEventListener('input', renderTable);
+  ['mkSungage','mkSunlight','mkGoodleap','mkOther','tolerance'].forEach(id => {
+    document.getElementById(id).addEventListener('input', renderAll);
+  });
+
+  document.getElementById('addRow').onclick = () => { rates.unshift({ lender:'', program:'', term:10, apr:0, dealerFee:0, markup:NaN }); renderAll(); };
+  document.getElementById('saveRates').onclick = () => { saveRates(); alert('Saved rates in this browser.'); };
+  document.getElementById('resetRates').onclick = () => {
+    if (!confirm('Reset rates to defaults? This clears your saved rates in this browser.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    loadRates();
+    renderAll();
+  };
+  document.getElementById('csvFile').addEventListener('change', (e) => { const f = e.target.files?.[0]; if (f) importCsv(f); e.target.value = ''; });
+  document.getElementById('exportCsv').onclick = exportRatesCsv;
+  document.getElementById('downloadTemplate').onclick = downloadTemplate;
+  ['subtotal','proposalGross'].forEach(id => document.getElementById(id).addEventListener('input', calc));
+  ['lender','term','apr'].forEach(id => document.getElementById(id).addEventListener('change', renderDropdowns));
+  document.getElementById('recalc').onclick = calc;
+
+  document.getElementById('copySummary').onclick = async () => {
+    const text = document.getElementById('summaryHint').textContent || '';
+    try { await navigator.clipboard.writeText(text); alert('Copied.'); }
+    catch { alert('Could not copy (browser permission).'); }
+  };
+
+  // ---------- Init ----------
+  loadRates();
+  renderTable();
+  const lenderSel = document.getElementById('lender');
+  if (!lenderSel.options.length) lenderSel.innerHTML = '<option value="">(no rates)</option>';
+  renderDropdowns();
+</script>
+</body>
+</html>
