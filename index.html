@@ -3,430 +3,1201 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Subcontractor Hub Proposal Audit</title>
+  <title>Fastrac Energy Services — Proposal Audit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --bg:#0b1220; --card:#121a2b; --muted:#9bb0d1; --text:#e8f0ff; --accent:#5aa2ff; --danger:#ff5a7a; --ok:#35d07f; --warn:#f5a623; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: linear-gradient(180deg, #0b1220, #070b14); color:var(--text); }
-    header { padding: 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
-    h1 { margin:0; font-size: 18px; letter-spacing:.2px; }
-    .sub { margin-top:6px; color:var(--muted); font-size: 12px; line-height: 1.4; }
-    .wrap { max-width: 1260px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
-    .grid { display:grid; gap:14px; grid-template-columns: 1.15fr .85fr; }
-    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
-    .card { background: rgba(18,26,43,.9); border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px; padding: 14px; box-shadow: 0 10px 25px rgba(0,0,0,.25); }
-    .card h2 { margin:0 0 10px; font-size: 14px; color: #dbe8ff; }
-    .row { display:flex; gap:10px; flex-wrap: wrap; align-items: end; }
-    label { display:block; font-size: 12px; color:var(--muted); margin-bottom: 6px; }
-    input, select, button {
-      width: 100%; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.10);
-      color: var(--text); padding: 10px 10px; border-radius: 10px; outline: none; }
-    input:focus, select:focus { border-color: rgba(90,162,255,.65); box-shadow: 0 0 0 3px rgba(90,162,255,.18); }
-    .field { flex:1; min-width: 180px; }
-    .field.small { min-width: 140px; flex: .6; }
-    .field.tiny { min-width: 110px; flex: .45; }
-    .btn { cursor:pointer; font-weight: 700; letter-spacing:.2px; background: rgba(90,162,255,.18); border-color: rgba(90,162,255,.45); }
-    .btn:hover { background: rgba(90,162,255,.24); }
-    .btn.danger { background: rgba(255,90,122,.16); border-color: rgba(255,90,122,.45); }
-    .btn.danger:hover { background: rgba(255,90,122,.22); }
-    .btn.ok { background: rgba(53,208,127,.16); border-color: rgba(53,208,127,.45); }
-    .btn.ok:hover { background: rgba(53,208,127,.22); }
-    .hint { color: var(--muted); font-size: 12px; margin-top: 8px; line-height: 1.35; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th, td { border-bottom: 1px solid rgba(255,255,255,.08); padding: 8px 8px; vertical-align: middle; }
-    th { text-align: left; color: #cfe0ff; font-weight: 800; position: sticky; top:0; background: rgba(18,26,43,.98); z-index: 1; }
-    td input { padding: 8px 8px; border-radius: 9px; }
-    .table-wrap { max-height: 420px; overflow: auto; border-radius: 12px; border:1px solid rgba(255,255,255,.08); }
-    .mono { font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-    .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; border:1px solid rgba(255,255,255,.14); color:#dbe8ff; }
-    .pill.ok { border-color: rgba(53,208,127,.45); color: #bff7db; background: rgba(53,208,127,.08); }
-    .pill.bad { border-color: rgba(255,90,122,.55); color: #ffd2dc; background: rgba(255,90,122,.08); }
-    .pill.warn { border-color: rgba(245,166,35,.55); color: #fde8b4; background: rgba(245,166,35,.08); }
-    .out { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 10px; }
-    @media (max-width: 520px) { .out { grid-template-columns: 1fr; } }
-    .kv { padding: 10px 12px; border:1px solid rgba(255,255,255,.08); border-radius: 12px; background: rgba(255,255,255,.03); }
-    .kv.highlight { border-color: rgba(90,162,255,.3); background: rgba(90,162,255,.06); }
-    .kv.highlight-warn { border-color: rgba(245,166,35,.3); background: rgba(245,166,35,.05); }
-    .kv.highlight-bad { border-color: rgba(255,90,122,.35); background: rgba(255,90,122,.05); }
-    .kv .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing:.4px; }
-    .kv .v { margin-top: 6px; font-size: 16px; font-weight: 900; }
-    .kv .sub-detail { margin-top: 5px; font-size: 11px; color: var(--muted); }
-    .audit-section { margin-top: 14px; border-top: 1px solid rgba(255,255,255,.08); padding-top: 12px; }
-    .audit-section h3 { margin: 0 0 10px; font-size: 13px; color: #c5d9ff; letter-spacing:.2px; }
-    .audit-table { width:100%; border-collapse:collapse; font-size:12px; }
-    .audit-table th { color:#9bb0d1; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.4px; padding:6px 8px; border-bottom:1px solid rgba(255,255,255,.08); text-align:left; }
-    .audit-table td { padding:8px 8px; border-bottom:1px solid rgba(255,255,255,.05); vertical-align:middle; }
-    .audit-table tr:last-child td { border-bottom: none; }
-    .audit-table .right { text-align:right; }
-    .verdict { display:flex; align-items:center; gap:6px; }
-    footer { padding: 10px 16px 18px; color: var(--muted); font-size: 12px; text-align:center; }
-    .right { text-align:right; }
-    code.inline { background: rgba(255,255,255,.06); padding: 2px 6px; border-radius: 8px; }
+    :root {
+      --orange:#E8611A; --orange-dim:rgba(232,97,26,.15); --orange-glow:rgba(232,97,26,.35);
+      --bg:#0d0f12; --bg2:#13161b; --bg3:#1a1e25; --bg4:#0f1217;
+      --border:rgba(255,255,255,.07); --border-med:rgba(255,255,255,.11);
+      --text:#f0f4ff; --muted:#8a98b0;
+      --ok:#2ecc71; --warn:#f5a623; --bad:#e74c3c;
+      --ok-dim:rgba(46,204,113,.11); --warn-dim:rgba(245,166,35,.11); --bad-dim:rgba(231,76,60,.11);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;}
+
+    /* HEADER */
+    header{background:#09090c;border-bottom:2px solid var(--orange);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;box-shadow:0 4px 30px rgba(0,0,0,.7);}
+    .logo-wrap{display:flex;align-items:center;gap:14px;}
+    .logo-text-big{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;color:#fff;}
+    .logo-text-big span{color:var(--orange);}
+    .logo-sub{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
+    .hdiv{width:1px;height:28px;background:var(--border-med);}
+    .htitle{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+    .hsub{font-size:10px;color:var(--muted);letter-spacing:.3px;}
+    .hright{display:flex;gap:8px;align-items:center;}
+    .dbadge{font-size:11px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 9px;}
+
+    /* TABS */
+    .tabs{display:flex;background:var(--bg4);border-bottom:1px solid var(--border);padding:0 20px;gap:0;}
+    .tab{padding:10px 18px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+    .tab:hover{color:var(--text);}
+    .tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+    .tab-panel{display:none;} .tab-panel.active{display:block;}
+
+    /* LAYOUT */
+    .main{max-width:1440px;margin:0 auto;padding:16px 16px;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+    .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+    .grid32{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;}
+    .col{display:flex;flex-direction:column;gap:14px;}
+    @media(max-width:1100px){.grid3,.grid32{grid-template-columns:1fr;}.grid2{grid-template-columns:1fr;}}
+    @media(max-width:700px){.grid4{grid-template-columns:1fr 1fr;}}
+
+    /* CARDS */
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:14px;position:relative;overflow:hidden;}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),transparent);}
+    .ctitle{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+    .ctitle .ico{color:var(--orange);}
+
+    /* FORM */
+    .fg{display:flex;flex-direction:column;gap:3px;margin-bottom:9px;}
+    .frow{display:flex;gap:8px;flex-wrap:wrap;}
+    .frow .fg{flex:1;min-width:120px;}
+    label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+    input[type=text],input[type=number],select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border-med);color:var(--text);padding:8px 10px;border-radius:7px;font-family:'Barlow',sans-serif;font-size:12px;outline:none;transition:border-color .15s,box-shadow .15s;}
+    input:focus,select:focus,textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-dim);}
+    select option{background:#1a1e25;}
+
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 12px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:1px solid;transition:all .15s;white-space:nowrap;}
+    .btn-primary{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .btn-primary:hover{background:#ff7535;box-shadow:0 0 12px var(--orange-glow);}
+    .btn-ghost{background:transparent;border-color:var(--border-med);color:var(--text);}
+    .btn-ghost:hover{border-color:var(--orange);color:var(--orange);}
+    .btn-danger{background:var(--bad-dim);border-color:rgba(231,76,60,.35);color:#ff8a80;}
+    .btn-danger:hover{background:rgba(231,76,60,.2);}
+    .btn-ok{background:var(--ok-dim);border-color:rgba(46,204,113,.35);color:#7fffb8;}
+    .btn-sm{padding:5px 9px;font-size:11px;}
+    .brow{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+
+    /* STATS */
+    .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .stat{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:9px 11px;transition:border-color .2s,background .2s;}
+    .stat.ok{border-color:rgba(46,204,113,.35);background:var(--ok-dim);}
+    .stat.warn{border-color:rgba(245,166,35,.35);background:var(--warn-dim);}
+    .stat.bad{border-color:rgba(231,76,60,.4);background:var(--bad-dim);}
+    .slabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:flex;align-items:center;gap:3px;}
+    .sval{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;margin-top:3px;letter-spacing:.3px;}
+    .ssub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+    /* PILLS */
+    .pill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border:1px solid;}
+    .pill-ok{border-color:rgba(46,204,113,.5);color:#7fffb8;background:var(--ok-dim);}
+    .pill-warn{border-color:rgba(245,166,35,.5);color:#ffe082;background:var(--warn-dim);}
+    .pill-bad{border-color:rgba(231,76,60,.5);color:#ff8a80;background:var(--bad-dim);}
+
+    /* DIVIDER */
+    .div{height:1px;background:var(--border);margin:10px 0;}
+
+    /* TOOLTIP */
+    .tt{position:relative;display:inline-flex;align-items:center;}
+    .tt-icon{width:13px;height:13px;background:var(--bg3);border:1px solid var(--border-med);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--muted);cursor:help;margin-left:4px;flex-shrink:0;}
+    .tt-box{display:none;position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--border-med);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--text);line-height:1.5;white-space:nowrap;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;min-width:220px;white-space:normal;max-width:260px;}
+    .tt:hover .tt-box{display:block;}
+
+    /* MODE TOGGLE */
+    .mtog{display:flex;border:1px solid var(--border-med);border-radius:7px;overflow:hidden;margin-bottom:12px;}
+    .mbtn{flex:1;padding:7px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .15s;}
+    .mbtn.active{background:var(--orange);color:#fff;}
+
+    /* TABLE */
+    .twrap{overflow:auto;border-radius:8px;border:1px solid var(--border);margin-top:8px;}
+    .twrap.h300{max-height:300px;} .twrap.h380{max-height:380px;} .twrap.h260{max-height:260px;}
+    table{width:100%;border-collapse:collapse;font-size:11px;}
+    th{padding:7px 9px;background:var(--bg4);color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;position:sticky;top:0;z-index:1;border-bottom:1px solid var(--border);text-align:left;}
+    td{padding:6px 9px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(255,255,255,.02);}
+    td input{padding:4px 7px;border-radius:5px;font-size:11px;}
+    .tr{text-align:right;}
+    .mono{font-family:'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;}
+
+    /* AUDIT CHECKLIST */
+    .ach-wrap{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:10px;}
+    .ach-head{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 90px;background:var(--bg4);border-bottom:1px solid var(--border);}
+    .ach-body .ach-row{border-bottom:1px solid rgba(255,255,255,.03);}
+    .ach-body .ach-row:last-child{border-bottom:none;}
+    .ach-row{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 90px;}
+    .ach-cell{padding:7px 9px;font-size:11px;display:flex;align-items:center;}
+    .ach-head .ach-cell{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
+    .ach-cell.r{justify-content:flex-end;}
+
+    /* ADDERS */
+    .ag-head{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--orange);padding:5px 0 3px;border-bottom:1px solid var(--border);margin-bottom:3px;}
+    .ai{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:6px;cursor:pointer;transition:background .1s;border:1px solid transparent;}
+    .ai:hover{background:var(--bg3);border-color:var(--border);}
+    .ai.sel{background:var(--orange-dim);border-color:var(--orange-glow);}
+    .ai-name{font-size:11px;font-weight:500;flex:1;}
+    .ai-detail{font-size:10px;color:var(--muted);}
+    .ai-price{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--orange);white-space:nowrap;}
+    .sa-row{display:flex;align-items:center;gap:7px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-size:11px;margin-bottom:4px;}
+    .sa-name{flex:1;}
+    .sa-price{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--orange);min-width:75px;text-align:right;}
+    .sa-rm{cursor:pointer;color:var(--muted);font-size:13px;} .sa-rm:hover{color:var(--bad);}
+    .aqty{width:46px!important;padding:3px 5px!important;font-size:11px!important;text-align:center;}
+    .acust{width:80px!important;padding:3px 5px!important;font-size:11px!important;}
+    .atot{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--orange-dim);border:1px solid var(--orange-glow);border-radius:7px;margin-top:5px;}
+    .atot-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+    .atot-val{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:var(--orange);}
+
+    /* EQUIPMENT */
+    .eq-section{margin-bottom:14px;}
+    .eq-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--orange);margin-bottom:8px;}
+    .eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
+    .eq-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s;}
+    .eq-card:hover{border-color:var(--border-med);}
+    .eq-card.sel{border-color:var(--orange);background:var(--orange-dim);}
+    .eq-card-name{font-size:12px;font-weight:600;margin-bottom:3px;}
+    .eq-card-detail{font-size:10px;color:var(--muted);line-height:1.4;}
+    .eq-card-price{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--orange);margin-top:5px;}
+    .eq-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-right:3px;margin-bottom:3px;}
+    .eq-badge.loan{background:rgba(90,162,255,.15);color:#7ab8ff;border:1px solid rgba(90,162,255,.3);}
+    .eq-badge.tpo{background:rgba(232,97,26,.15);color:#ff9a5c;border:1px solid rgba(232,97,26,.3);}
+
+    /* LOG */
+    .log-empty{text-align:center;color:var(--muted);padding:18px;font-size:11px;}
+    .hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4;}
+    code.il{background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:10px;}
+    footer{text-align:center;padding:14px;color:var(--muted);font-size:11px;border-top:1px solid var(--border);margin-top:6px;}
+    ::-webkit-scrollbar{width:4px;height:4px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--border-med);border-radius:3px;}
+    @media print{header{position:static;}.no-print{display:none!important;}.card{break-inside:avoid;}body{background:white;color:black;}}
   </style>
 </head>
 <body>
+
 <header>
-  <div class="wrap" style="padding:0 16px;">
-    <h1>Subcontractor Hub Proposal Audit</h1>
-    <div class="sub">
-      Effective fee = <code class="inline">Dealer Fee %</code> + <code class="inline">Markup %</code>.
-      Implied fees are reverse-engineered from Proposal Gross to catch lender discrepancies.
+  <div class="logo-wrap">
+    <div>
+      <div class="logo-text-big">FAST<span>RAC</span></div>
+      <div class="logo-sub">Energy Services</div>
     </div>
+    <div class="hdiv"></div>
+    <div>
+      <div class="htitle">Dealer Fee Reconciliation</div>
+      <div class="hsub">Sales Ops · Back-Office Reconciliation · Rates effective Jan 21, 2026</div>
+    </div>
+  </div>
+  <div class="hright no-print">
+    <div class="dbadge" id="hDate"></div>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
   </div>
 </header>
 
-<div class="wrap grid">
-  <section class="card">
-    <h2>Rates Table (edit / import)</h2>
-    <div class="row">
-      <div class="field"><label>Quick filter (Lender / Program)</label><input id="filter" placeholder="Type to filter rows..." /></div>
-      <div class="field small"><label>Match tolerance ($)</label><input id="tolerance" type="number" step="0.01" value="5.00" /></div>
-      <div class="field tiny"><label>&nbsp;</label><button class="btn ok" id="addRow">+ Add Row</button></div>
-      <div class="field tiny"><label>&nbsp;</label><button class="btn" id="saveRates">Save</button></div>
-      <div class="field tiny"><label>&nbsp;</label><button class="btn danger" id="resetRates">Reset</button></div>
-    </div>
-    <div class="row" style="margin-top:10px;">
-      <div class="field"><label>Import Rates CSV</label><input id="csvFile" type="file" accept=".csv" /></div>
-      <div class="field tiny"><label>&nbsp;</label><button class="btn" id="exportCsv">Export CSV</button></div>
-      <div class="field tiny"><label>&nbsp;</label><button class="btn" id="downloadTemplate">CSV Template</button></div>
-    </div>
-    <div class="hint">CSV columns: <code class="inline">lender,program,term,apr,dealerFee,markup</code> (percents as numbers like 20.99). Leave markup blank to use defaults.</div>
-    <div class="row" style="margin-top:10px;">
-      <div class="field small"><label>Default Markup – Sungage</label><input id="mkSungage" type="number" step="0.01" value="2.00" /></div>
-      <div class="field small"><label>Default Markup – Sunlight</label><input id="mkSunlight" type="number" step="0.01" value="2.00" /></div>
-      <div class="field small"><label>Default Markup – Goodleap</label><input id="mkGoodleap" type="number" step="0.01" value="2.00" /></div>
-      <div class="field small"><label>Default Markup – Other</label><input id="mkOther" type="number" step="0.01" value="0.00" /></div>
-    </div>
-    <div class="table-wrap" style="margin-top: 12px;">
-      <table id="ratesTable">
-        <thead><tr>
-          <th style="min-width:140px;">Lender</th>
-          <th style="min-width:170px;">Program / Notes</th>
-          <th class="right" style="min-width:80px;">Term</th>
-          <th class="right" style="min-width:90px;">APR %</th>
-          <th class="right" style="min-width:130px;">Dealer Fee %</th>
-          <th class="right" style="min-width:110px;">Markup %</th>
-          <th class="right" style="min-width:150px;">Effective Fee %</th>
-          <th style="min-width:80px;">&nbsp;</th>
-        </tr></thead>
-        <tbody id="ratesBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>Audit Calculator</h2>
-    <div class="row">
-      <div class="field"><label>Subtotal (net to you)</label><input id="subtotal" type="number" step="0.01" placeholder="e.g. 48205" /></div>
-      <div class="field"><label>Lender</label><select id="lender"></select></div>
-    </div>
-    <div class="row" style="margin-top:8px;">
-      <div class="field small"><label>Term (yrs)</label><select id="term"></select></div>
-      <div class="field small"><label>APR (%)</label><select id="apr"></select></div>
-      <div class="field"><label>Proposal Gross (from Hub)</label><input id="proposalGross" type="number" step="0.01" placeholder="e.g. 61011.26" /></div>
-    </div>
-    <div class="hint">Expected Gross = Subtotal ÷ (1 − Effective Fee%). Implied fees are reverse-engineered from Proposal Gross.</div>
-
-    <div class="out">
-      <div class="kv"><div class="k">Dealer Fee % (table)</div><div class="v mono" id="dealerFeePct">—</div></div>
-      <div class="kv"><div class="k">Markup %</div><div class="v mono" id="markupPct">—</div></div>
-      <div class="kv highlight"><div class="k">Effective Fee % (expected)</div><div class="v mono" id="effFee">—</div></div>
-      <div class="kv"><div class="k">Expected Gross</div><div class="v mono" id="expectedGross">—</div></div>
-      <div class="kv"><div class="k">Expected Dealer Fee $</div><div class="v mono" id="dealerFeeDollars">—</div></div>
-      <div class="kv" id="diffCard">
-        <div class="k">Difference $ (Proposal − Expected)</div>
-        <div class="v mono" id="diff">—</div>
-        <div style="margin-top:8px;" id="status"></div>
-      </div>
-    </div>
-
-    <div class="audit-section">
-      <h3>🔍 Extended Audit Breakdown</h3>
-      <div class="out" style="margin-top:0;">
-        <div class="kv" id="diffPctCard">
-          <div class="k">Difference % (of Expected Gross)</div>
-          <div class="v mono" id="diffPct">—</div>
-          <div class="sub-detail" id="diffPctDetail"></div>
-        </div>
-        <div class="kv" id="impliedEffCard">
-          <div class="k">Implied Effective Fee % (from Proposal)</div>
-          <div class="v mono" id="impliedEff">—</div>
-          <div class="sub-detail" id="impliedEffDetail"></div>
-        </div>
-        <div class="kv" id="impliedDealerCard">
-          <div class="k">Implied Dealer Fee % (markup removed)</div>
-          <div class="v mono" id="impliedDealer">—</div>
-          <div class="sub-detail" id="impliedDealerDetail"></div>
-        </div>
-        <div class="kv" id="feeDriftCard">
-          <div class="k">Dealer Fee Drift (Implied − Table)</div>
-          <div class="v mono" id="feeDrift">—</div>
-          <div class="sub-detail" id="feeDriftDetail"></div>
-        </div>
-      </div>
-
-      <table class="audit-table" style="margin-top:12px;">
-        <thead><tr>
-          <th>Audit Check</th>
-          <th class="right">Expected</th>
-          <th class="right">Actual / Implied</th>
-          <th class="right">Delta</th>
-          <th>Verdict</th>
-        </tr></thead>
-        <tbody id="auditBody">
-          <tr><td colspan="5" style="color:var(--muted);font-size:12px;padding:10px 8px;">Enter subtotal and proposal gross to see audit results.</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="row" style="margin-top:12px;">
-      <div class="field tiny"><button class="btn ok" id="recalc">Recalculate</button></div>
-      <div class="field"><button class="btn" id="copySummary">Copy Audit Summary</button></div>
-    </div>
-    <div class="hint" id="summaryHint"></div>
-  </section>
+<div class="tabs no-print">
+  <div class="tab active" onclick="switchTab('audit')">🔍 Audit Calculator</div>
+  <div class="tab" onclick="switchTab('rates')">📋 Rates Table</div>
+  <div class="tab" onclick="switchTab('equipment')">⚡ Equipment</div>
+  <div class="tab" onclick="switchTab('log')">📁 Reconciliation Log</div>
 </div>
 
-<footer>Save rates locally in your browser. Deploy as a single file on GitHub Pages.</footer>
+<div class="main">
+
+  <!-- ═══════════════ TAB: AUDIT ═══════════════ -->
+  <div class="tab-panel active" id="tab-audit">
+    <div class="grid32" style="margin-bottom:14px;">
+
+      <!-- LEFT: Deal + Lender + Adders stacked -->
+      <div class="col">
+
+        <!-- Deal Info -->
+        <div class="card">
+          <div class="ctitle"><span class="ico">📋</span> Deal Record</div>
+          <div class="mtog no-print">
+            <button class="mbtn active" id="modeLoan" onclick="setMode('loan')">📄 Financed Deal</button>
+            <button class="mbtn" id="modeCash" onclick="setMode('cash')">💵 Cash / No Lender</button>
+          </div>
+          <div class="frow">
+            <div class="fg"><label>Rep Name</label><input type="text" id="repName" placeholder="Rep who submitted deal"/></div>
+            <div class="fg"><label>Customer / Deal Name</label><input type="text" id="dealName" placeholder="e.g. Martinez, John — 123 Main St"/></div>
+          </div>
+          <div class="frow">
+            <div class="fg">
+              <label>System Size (kW) <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Used for per-watt adder calculations (steep roof, ground mount, etc.)</span></span></label>
+              <input type="number" id="systemKw" step="0.01" placeholder="e.g. 10.5" oninput="recalcAdders()"/>
+            </div>
+            <div class="fg"><label>Notes</label><input type="text" id="dealNotes" placeholder="Optional deal notes..."/></div>
+          </div>
+          <div id="cashBanner" style="display:none;background:var(--warn-dim);border:1px solid rgba(245,166,35,.4);border-radius:7px;padding:9px 11px;font-size:11px;color:#ffe082;margin-top:4px;">
+            📋 <strong>Cash / No Lender Deal</strong> — No dealer fee to reconcile. Use adder section to verify line items only.
+          </div>
+        </div>
+
+        <!-- Loan Product -->
+        <div class="card" id="lenderCard">
+          <div class="ctitle"><span class="ico">🏦</span> Loan Product</div>
+          <div class="fg">
+            <label>Quick Select Product</label>
+            <select id="productSelect" onchange="applyProduct()">
+              <option value="">— Pick a saved loan product —</option>
+            </select>
+          </div>
+          <div class="div"></div>
+          <div class="frow">
+            <div class="fg"><label>Lender</label><select id="lender" onchange="onLenderChange()"></select></div>
+            <div class="fg"><label>Term (yrs)</label><select id="term" onchange="onTermChange()"></select></div>
+            <div class="fg"><label>APR (%)</label><select id="apr" onchange="calc()"></select></div>
+          </div>
+          <div class="frow">
+            <div class="fg">
+              <label>Contract Subtotal (net to Fastrac) <span class="tt"><span class="tt-icon">?</span><span class="tt-box">The net contract amount — what Fastrac receives after the lender dealer fee is deducted</span></span></label>
+              <input type="number" id="subtotal" step="0.01" placeholder="e.g. 48205.00" oninput="calc()"/>
+            </div>
+            <div class="fg">
+              <label>Lender Funded Amount <span class="tt"><span class="tt-icon">?</span><span class="tt-box">The total gross amount the lender funded / shows in their portal — what you are reconciling against. This should be HIGHER than the contract subtotal when a dealer fee applies.</span></span></label>
+              <input type="number" id="proposalGross" step="0.01" placeholder="Funded amount from lender portal" oninput="calc()"/>
+              <div id="fundedWarning" style="display:none;font-size:10px;color:#ff8a80;margin-top:3px;">⚠ Same as subtotal — confirm this is correct. With a ${eff}% effective fee, expected gross is higher.</div>
+            </div>
+          </div>
+          <div class="frow" style="margin-top:4px;">
+            <div class="fg">
+              <label>Dealer Fee % (from table)</label>
+              <div style="background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:8px 10px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--orange);" id="displayDf">—</div>
+            </div>
+            <div class="fg">
+              <label>Markup % (lender default)</label>
+              <div style="background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:8px 10px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--orange);" id="displayMk">—</div>
+            </div>
+            <div class="fg">
+              <label>Effective Fee % (DF + Markup)</label>
+              <div style="background:var(--bg4);border:1px solid var(--border-med);border-radius:7px;padding:8px 10px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#fff;" id="displayEff">—</div>
+              <div id="displayEffBreakdown" style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.3px;"></div>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="fg">
+              <label>Override Dealer Fee % <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Only fill in if the lender is charging a different dealer fee than the table rate. Leave blank to use the table value above.</span></span></label>
+              <input type="number" id="overrideDf" step="0.01" placeholder="Leave blank — use table rate" oninput="calc()"/>
+            </div>
+            <div class="fg">
+              <label>Override Markup % <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Only fill in if this deal has a non-standard markup. Leave blank to use lender default above.</span></span></label>
+              <input type="number" id="overrideMk" step="0.01" placeholder="Leave blank — use default" oninput="calc()"/>
+            </div>
+
+          </div>
+          <div class="brow">
+            <button class="btn btn-primary" style="flex:1" onclick="calc()">▶ Reconcile</button>
+            <button class="btn btn-ghost btn-sm" onclick="clearCalc()">✕ New Record</button>
+          </div>
+          <div class="div" style="margin-top:12px;"></div>
+          <div class="ctitle" style="margin-bottom:8px;"><span class="ico">⚙️</span> Default Markups</div>
+          <div class="frow">
+            <div class="fg"><label>Sungage %</label><input type="number" id="mkSungage" step="0.01" value="2.00" oninput="renderAll()"/></div>
+            <div class="fg"><label>Sunlight %</label><input type="number" id="mkSunlight" step="0.01" value="2.01" oninput="renderAll()"/></div>
+            <div class="fg"><label>Goodleap %</label><input type="number" id="mkGoodleap" step="0.01" value="2.01" oninput="renderAll()"/></div>
+            <div class="fg"><label>Almika %</label><input type="number" id="mkAlmika" step="0.01" value="1.50" oninput="renderAll()"/></div>
+            <div class="fg"><label>SunStone %</label><input type="number" id="mkSunstone" step="0.01" value="0.00" oninput="renderAll()"/></div>
+            <div class="fg"><label>Other %</label><input type="number" id="mkOther" step="0.01" value="0.00" oninput="renderAll()"/></div>
+          </div>
+        </div>
+
+        <!-- Adders -->
+        <div class="card">
+          <div class="ctitle"><span class="ico">➕</span> Adders (Exhibit B · Mar 3, 2026)</div>
+          <input type="text" id="adderSearch" placeholder="Search adders..." oninput="renderAdders()" style="margin-bottom:8px;"/>
+          <div style="max-height:320px;overflow-y:auto;padding-right:3px;" id="adderGroups"></div>
+          <div class="div"></div>
+          <div class="ctitle" style="margin-bottom:6px;"><span class="ico">✅</span> Selected Adders</div>
+          <div id="selectedAdders"><div style="text-align:center;color:var(--muted);font-size:11px;padding:10px;">No adders selected</div></div>
+          <div class="atot" id="adderTotRow" style="display:none;">
+            <span class="atot-lbl">Total Adders</span>
+            <span class="atot-val" id="adderTotVal">$0.00</span>
+          </div>
+          <div class="hint" style="margin-top:6px;">Use to verify adder line items in the lender portal match contracted amounts.</div>
+        </div>
+
+      </div><!-- /col -->
+
+      <!-- RIGHT: Audit Results -->
+      <div class="col">
+        <div class="card">
+          <div class="ctitle"><span class="ico">🔍</span> Reconciliation Results</div>
+
+          <div class="sgrid">
+            <div class="stat" id="stDf"><div class="slabel">Dealer Fee % (Table)</div><div class="sval mono" id="vDf">—</div></div>
+            <div class="stat" id="stMk"><div class="slabel">Markup %</div><div class="sval mono" id="vMk">—</div></div>
+            <div class="stat" id="stEff">
+              <div class="slabel">Effective Fee % <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Dealer Fee + Markup = total percentage taken from the gross proposal amount</span></span></div>
+              <div class="sval mono" id="vEff">—</div>
+            </div>
+            <div class="stat" id="stExpG"><div class="slabel">Expected Gross</div><div class="sval mono" id="vExpG">—</div></div>
+            <div class="stat" id="stExpFee"><div class="slabel">Expected Dealer Fee $</div><div class="sval mono" id="vExpFee">—</div></div>
+            <div class="stat" id="stDiff">
+              <div class="slabel">Variance $ (Funded − Expected)</div>
+              <div class="sval mono" id="vDiff">—</div>
+              <div class="ssub" id="vDiffVerdict"></div>
+            </div>
+          </div>
+
+          <div class="div"></div>
+          <div class="ctitle" style="margin-bottom:8px;"><span class="ico">📊</span> Extended Breakdown</div>
+
+          <div class="sgrid">
+            <div class="stat" id="stDiffPct">
+              <div class="slabel">Variance % of Expected <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Percentage variance between proposal gross and expected gross. Any non-zero value is flagged.</span></span></div>
+              <div class="sval mono" id="vDiffPct">—</div>
+              <div class="ssub" id="vDiffPctSub"></div>
+            </div>
+            <div class="stat" id="stImpEff">
+              <div class="slabel">Implied Effective Fee % <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Back-calculated from proposal gross: 1 − (Subtotal ÷ Proposal Gross). Should match your table effective fee.</span></span></div>
+              <div class="sval mono" id="vImpEff">—</div>
+              <div class="ssub" id="vImpEffSub"></div>
+            </div>
+            <div class="stat" id="stImpDf">
+              <div class="slabel">Implied Dealer Fee % <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Implied Effective Fee minus your markup. What the lender is actually charging as their dealer fee.</span></span></div>
+              <div class="sval mono" id="vImpDf">—</div>
+              <div class="ssub" id="vImpDfSub"></div>
+            </div>
+            <div class="stat" id="stDrift">
+              <div class="slabel">Dealer Fee Drift <span class="tt"><span class="tt-icon">?</span><span class="tt-box">Implied Dealer Fee minus table rate. Positive = lender charging above their published rate.</span></span></div>
+              <div class="sval mono" id="vDrift">—</div>
+              <div class="ssub" id="vDriftSub"></div>
+            </div>
+          </div>
+
+          <!-- Audit Checklist -->
+          <div class="ach-wrap">
+            <div class="ach-head">
+              <div class="ach-cell">Check</div>
+              <div class="ach-cell r">Expected</div>
+              <div class="ach-cell r">Actual</div>
+              <div class="ach-cell r">Delta</div>
+              <div class="ach-cell">Verdict</div>
+            </div>
+            <div class="ach-body" id="achBody">
+              <div class="ach-row"><div class="ach-cell" style="grid-column:1/-1;color:var(--muted);">Enter deal values and click Reconcile to run.</div></div>
+            </div>
+          </div>
+
+          <div class="fg" style="margin-top:10px;"><label>Dispute / Resolution Notes</label><textarea id="disputeNotes" rows="2" placeholder="e.g. Submitted dispute to Sungage on 3/5/26. Awaiting credit memo..." style="resize:vertical;"></textarea></div>
+          <div class="brow no-print">
+            <button class="btn btn-primary" onclick="saveToLog()">💾 Save Record</button>
+            <button class="btn btn-ghost" onclick="copySum()">📋 Copy for Dispute</button>
+          </div>
+          <div class="hint" id="sumHint" style="margin-top:6px;word-break:break-all;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab audit -->
+
+  <!-- ═══════════════ TAB: RATES ═══════════════ -->
+  <div class="tab-panel" id="tab-rates">
+    <div class="card">
+      <div class="ctitle"><span class="ico">📋</span> Rates Table — All Lenders (2026, effective Jan 21)</div>
+      <div class="frow" style="margin-bottom:8px;">
+        <div class="fg"><input type="text" id="filterRates" placeholder="Filter by lender or program..." oninput="renderTable()"/></div>
+        <button class="btn btn-ok btn-sm" onclick="addRateRow()">+ Row</button>
+        <button class="btn btn-ghost btn-sm" onclick="saveRates()">💾 Save</button>
+        <button class="btn btn-danger btn-sm" onclick="resetRates()">↺ Reset</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCsv()">Export</button>
+        <button class="btn btn-ghost btn-sm" onclick="dlTemplate()">Template</button>
+      </div>
+      <div class="frow" style="margin-bottom:6px;">
+        <div class="fg"><input type="file" id="csvFile" accept=".csv" onchange="importCsv(this.files[0]);this.value=''"/></div>
+      </div>
+      <div class="hint">CSV columns: <code class="il">lender,program,term,apr,dealerFee,markup</code> — leave markup blank to use lender default.</div>
+      <div class="twrap h380">
+        <table>
+          <thead><tr><th>Lender</th><th>Program</th><th class="tr">Term</th><th class="tr">APR%</th><th class="tr">Dealer Fee%</th><th class="tr">Markup%</th><th class="tr">Effective%</th><th></th></tr></thead>
+          <tbody id="ratesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: EQUIPMENT ═══════════════ -->
+  <div class="tab-panel" id="tab-equipment">
+    <div class="grid2">
+
+      <div class="col">
+        <div class="card">
+          <div class="ctitle"><span class="ico">☀️</span> Panels / Modules (effective Feb 1, 2026)</div>
+          <div class="eq-section">
+            <div class="eq-title">Loan Products</div>
+            <div class="eq-grid">
+              <div class="eq-card"><div class="eq-card-name">JA Solar 440W</div><div class="eq-card-detail">All loan products (primary)</div><div><span class="eq-badge loan">LOAN</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">Sirius PV 410W</div><div class="eq-card-detail">All loan products (secondary)</div><div><span class="eq-badge loan">LOAN</span></div></div>
+            </div>
+          </div>
+          <div class="eq-section">
+            <div class="eq-title">TPO Products</div>
+            <div class="eq-grid">
+              <div class="eq-card"><div class="eq-card-name">Sirius PV 410W</div><div class="eq-card-detail">Lightreach Solar Only</div><div><span class="eq-badge tpo">LIGHTREACH</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">Sirius PV 410W</div><div class="eq-card-detail">Lightreach Solar+Battery</div><div><span class="eq-badge tpo">LIGHTREACH</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">Q-Cells 430W</div><div class="eq-card-detail">Lightreach Safe Harbor (pair w/ Tesla)</div><div><span class="eq-badge tpo">LIGHTREACH</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">JA Solar 440W</div><div class="eq-card-detail">Everbright Solar Only (1st choice)</div><div><span class="eq-badge tpo">EVERBRIGHT</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">Sirius PV 410W</div><div class="eq-card-detail">Everbright Solar Only (2nd choice)</div><div><span class="eq-badge tpo">EVERBRIGHT</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">Q-Cells 430W</div><div class="eq-card-detail">Everbright Solar+Storage / GexaBright / Enfin</div><div><span class="eq-badge tpo">TPO</span></div></div>
+            </div>
+          </div>
+          <div class="eq-section">
+            <div class="eq-title">Inverters</div>
+            <div class="eq-grid">
+              <div class="eq-card"><div class="eq-card-name">SolarEdge SE</div><div class="eq-card-detail">Loan &amp; Cash — Solar Only</div><div><span class="eq-badge loan">LOAN</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">SolarEdge EnergyHub</div><div class="eq-card-detail">Loan — Solar + Battery</div><div><span class="eq-badge loan">LOAN</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">Enphase</div><div class="eq-card-detail">Loan &amp; Cash — $0.07/watt adder</div><div><span class="eq-badge loan">LOAN</span></div></div>
+              <div class="eq-card"><div class="eq-card-name">SOLED USE</div><div class="eq-card-detail">PPAs w/ Domestic Content (45%)</div><div><span class="eq-badge tpo">PPA</span></div></div>
+            </div>
+          </div>
+          <div class="hint" style="margin-top:4px;">⚠️ Min system size: 7.00 kW per battery (e.g. 2 batteries = 14 kW min). Ground mount min: 10.00 kW.</div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card">
+          <div class="ctitle"><span class="ico">🔋</span> Battery Pricing (effective Feb 25, 2026)</div>
+          <div class="twrap">
+            <table>
+              <thead><tr><th>Model</th><th class="tr">kWh</th><th class="tr">1st Unit</th><th class="tr">2nd/3rd Unit</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td><strong>SolarEdge</strong></td><td class="tr mono">10</td><td class="tr mono" style="color:var(--orange);">$17,500</td><td class="tr mono">$12,500</td><td style="font-size:10px;">2nd Battery</td></tr>
+                <tr><td><strong>Enphase 5P ×2</strong></td><td class="tr mono">10</td><td class="tr mono" style="color:var(--orange);">$14,500</td><td class="tr mono">$10,000</td><td style="font-size:10px;">2nd Pair</td></tr>
+                <tr><td><strong>Tesla Powerwall 3</strong></td><td class="tr mono">13.5</td><td class="tr mono" style="color:var(--orange);">$13,500</td><td class="tr mono">$10,500</td><td style="font-size:10px;">Expansion Pack</td></tr>
+                <tr><td><strong>FranklinWH</strong></td><td class="tr mono">15</td><td class="tr mono" style="color:var(--orange);">$14,500</td><td class="tr mono">$10,000</td><td style="font-size:10px;">—</td></tr>
+                <tr><td><strong>FOX ESS</strong></td><td class="tr mono">20</td><td class="tr mono" style="color:var(--orange);">$12,000</td><td class="tr mono">—</td><td style="font-size:10px;">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ctitle"><span class="ico">📐</span> System Sizing Rules</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.6;">
+              <div style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">Battery Minimums</div>
+              For each battery in a system, there is a minimum system size of <strong>7.00 kW</strong>.<br/>
+              Example: 2 batteries = 14.00 kW minimum.
+            </div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.6;">
+              <div style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">Ground Mount</div>
+              Minimum system size: <strong>10.00 kW</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ctitle"><span class="ico">🔗</span> Lender ↔ Equipment Compatibility</div>
+          <div class="twrap">
+            <table>
+              <thead><tr><th>Lender</th><th>Deal Type</th><th>Panel</th><th>Inverter</th><th>Storage</th></tr></thead>
+              <tbody>
+                <tr><td>Lightreach</td><td>Solar Only</td><td>Sirius 410W</td><td>DC</td><td>—</td></tr>
+                <tr><td>Lightreach</td><td>Solar+Storage</td><td>Sirius 410W</td><td>DC</td><td>Enphase</td></tr>
+                <tr><td>Goodleap TPO</td><td>Solar Only</td><td>Sirius 410W</td><td>DC</td><td>—</td></tr>
+                <tr><td>Goodleap TPO</td><td>Safe Harbor</td><td>Q-Cells 430W</td><td>—</td><td>Tesla PW3</td></tr>
+                <tr><td>Everbright</td><td>Solar Only (40%)</td><td>JA/Sirius</td><td>—</td><td>—</td></tr>
+                <tr><td>Everbright</td><td>Solar+Storage</td><td>Q-Cells+Tesla</td><td>Enphase</td><td>Tesla PW3</td></tr>
+                <tr><td>GexaBright</td><td>Solar Only</td><td>Q-Cells 430W</td><td>—</td><td>—</td></tr>
+                <tr><td>GexaBright</td><td>Solar+Storage</td><td>Q-Cells+SE</td><td>SE</td><td>SolarEdge</td></tr>
+                <tr><td>Enfin</td><td>Solar Only</td><td>Q-Cells 430W</td><td>DC</td><td>—</td></tr>
+                <tr><td>Enfin</td><td>Solar+Storage 50%DC</td><td>Q-Cells+Tesla</td><td>Enphase</td><td>Tesla PW3</td></tr>
+                <tr><td>Sungage/Sunlight</td><td>Solar Only</td><td>Sirius 410W</td><td>Enphase</td><td>—</td></tr>
+                <tr><td>Sungage/Sunlight</td><td>Solar+Storage</td><td>Sirius 410W</td><td>Fox ESS/Tesla</td><td>Fox ESS / Tesla</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab equipment -->
+
+  <!-- ═══════════════ TAB: LOG ═══════════════ -->
+  <div class="tab-panel" id="tab-log">
+    <div class="card">
+      <div class="ctitle"><span class="ico">📁</span> Reconciliation Log <span style="color:var(--muted);font-weight:400;font-size:11px;margin-left:4px;" id="logCount"></span></div>
+      <div class="twrap h380">
+        <table class="log-tbl">
+          <thead><tr><th>Date</th><th>Rep</th><th>Deal</th><th>Lender</th><th>Program</th><th class="tr">Term</th><th class="tr">APR</th><th class="tr">Subtotal</th><th class="tr">Proposal</th><th class="tr">Expected</th><th class="tr">Diff $</th><th class="tr">Diff %</th><th class="tr">Dealer Fee%</th><th class="tr">Markup%</th><th class="tr">Eff Fee%</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody id="logBody"><tr><td colspan="17" class="log-empty">No reconciliation records saved yet.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="brow no-print">
+        <button class="btn btn-ghost btn-sm" onclick="exportLog()">Export Records CSV</button>
+        <button class="btn btn-danger btn-sm" onclick="clearLog()">Clear Records</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<footer>Fastrac Energy Services · Sales Ops · Dealer Fee Reconciliation Tool · Lender Rates Jan 21, 2026 · Equipment Feb 1, 2026 · Adders Mar 3, 2026 · For internal use only</footer>
 
 <script>
-  const fmtMoney = (n) => (isFinite(n) ? n.toLocaleString(undefined, {style:'currency', currency:'USD'}) : '—');
-  const fmtPct   = (n) => (isFinite(n) ? (Math.round(n*100)/100).toFixed(2) + '%' : '—');
-  const fmtPct4  = (n) => (isFinite(n) ? n.toFixed(4) + '%' : '—');
-  const round2   = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
-  const round4   = (n) => Math.round((n + Number.EPSILON) * 10000) / 10000;
-  const parseNum = (v) => { const n = Number(String(v).replace(/[^0-9.\-]/g,'')); return isFinite(n) ? n : NaN; };
-  const uniq     = (arr) => [...new Set(arr)].filter(Boolean);
-  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+// ── UTILS ──
+const fmtM  = n => isFinite(n) ? n.toLocaleString('en-US',{style:'currency',currency:'USD'}) : '—';
+const fmtP  = n => isFinite(n) ? (Math.round(n*1000)/1000).toFixed(2)+'%' : '—';
+const fmtP4 = n => isFinite(n) ? n.toFixed(4)+'%' : '—';
+const r2    = n => Math.round((n + Number.EPSILON) * 100) / 100;
+const r4    = n => Math.round((n + Number.EPSILON) * 10000) / 10000;
+const pN    = v => { const n = Number(String(v).replace(/[^0-9.\-]/g,'')); return isFinite(n) ? n : NaN; };
+const uniq  = a => [...new Set(a)].filter(Boolean);
+const esc   = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const $     = id => document.getElementById(id);
 
-  function defaultMarkupForLender(lenderRaw) {
-    const lender = String(lenderRaw || '').trim().toLowerCase();
-    const mkS = parseNum(document.getElementById('mkSungage').value);
-    const mkL = parseNum(document.getElementById('mkSunlight').value);
-    const mkG = parseNum(document.getElementById('mkGoodleap').value);
-    const mkO = parseNum(document.getElementById('mkOther').value);
-    if (lender.includes('sungage'))  return isFinite(mkS) ? mkS : 0;
-    if (lender.includes('sunlight')) return isFinite(mkL) ? mkL : 0;
-    if (lender.includes('goodleap') || lender.includes('good leap')) return isFinite(mkG) ? mkG : 0;
-    return isFinite(mkO) ? mkO : 0;
-  }
+$('hDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
 
-  function effectiveFee(row) {
-    const dealerFee = isFinite(row.dealerFee) ? row.dealerFee : 0;
-    const mk = isFinite(row.markup) ? row.markup : defaultMarkupForLender(row.lender);
-    return round2(dealerFee + mk);
-  }
+// ── TABS ──
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', ['audit','rates','equipment','log'][i]===t));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id==='tab-'+t));
+}
 
-  const DEFAULT_RATES = [
-    { lender:'Sungage',  program:'Sunrise (example)',  term:25, apr:5.99,  dealerFee:20.99, markup:NaN },
-    { lender:'Sunlight', program:'Standard (example)', term:20, apr:11.99, dealerFee:2.01,  markup:NaN },
-    { lender:'Goodleap', program:'Standard (example)', term:7,  apr:7.99,  dealerFee:16.50, markup:NaN },
-  ];
-  const STORAGE_KEY = 'proposal_audit_rates_v1';
-  let rates = [];
+// ── MODE ──
+let dealMode = 'loan';
+function setMode(m) {
+  dealMode = m;
+  $('modeLoan').classList.toggle('active', m==='loan');
+  $('modeCash').classList.toggle('active', m==='cash');
+  $('lenderCard').style.display = m==='loan' ? '' : 'none';
+  $('cashBanner').style.display = m==='cash' ? '' : 'none';
+  calc();
+}
 
-  function loadRates() {
-    try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) { const p = JSON.parse(raw); if (Array.isArray(p)) { rates = p; return; } } } catch (_) {}
-    rates = structuredClone(DEFAULT_RATES);
-  }
-  function saveRates() { localStorage.setItem(STORAGE_KEY, JSON.stringify(rates)); }
-  function normalizeRow(r) {
-    return { lender:(r.lender??'').toString().trim(), program:(r.program??'').toString().trim(),
-      term:parseNum(r.term), apr:parseNum(r.apr), dealerFee:parseNum(r.dealerFee), markup:parseNum(r.markup) };
-  }
+// ── ADDER DATA ──
+const ADDERS = [
+  {g:'MPU / Electrical',name:'Derate Main Breaker',price:1250,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Line Side Tap',price:500,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Meter Can Upgrade (MCU)',price:1750,per:'ea',d:''},
+  {g:'MPU / Electrical',name:"MSP Upgrade (up to 10')",price:2750,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'MSP / MCU Combo',price:3750,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'MBE + LST (MSP Avoidance)',price:1750,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Sub-panel',price:1250,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Utility Required 200A Switch',price:1750,per:'ea',d:'As required by Utility'},
+  {g:'MPU / Electrical',name:'Surge Protector',price:400,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Generator Inlet Plug',price:500,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Smoke Detectors',price:225,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Cell Card',price:500,per:'ea',d:''},
+  {g:'MPU / Electrical',name:'Utility Required DG Meter',price:425,per:'ea',d:'Austin Energy, Bluebonnet, Coops'},
+  {g:'Energy Storage',name:'SolarEdge Backup – 1st Battery (10kWh)',price:17500,per:'ea',d:''},
+  {g:'Energy Storage',name:'SolarEdge Backup – 2nd/3rd Battery',price:12500,per:'ea',d:''},
+  {g:'Energy Storage',name:'Enphase Backup – 1st Battery (10kWh)',price:14500,per:'ea',d:''},
+  {g:'Energy Storage',name:'Enphase Backup – 2nd/3rd Battery',price:10000,per:'ea',d:''},
+  {g:'Energy Storage',name:'Tesla Powerwall 3',price:13500,per:'ea',d:''},
+  {g:'Energy Storage',name:'Tesla Powerwall 3 Expansion Pack',price:10500,per:'ea',d:''},
+  {g:'Energy Storage',name:'FranklinWH (15kWh)',price:14500,per:'ea',d:''},
+  {g:'Energy Storage',name:'Fox ESS (20kWh)',price:12000,per:'ea',d:''},
+  {g:'Energy Storage',name:'Tesla Powerwall 3 (Retrofit)',price:14500,per:'ea',d:'Retrofit'},
+  {g:'Energy Storage',name:'Tesla PW3 Expansion (Retrofit)',price:11500,per:'ea',d:'Retrofit'},
+  {g:'Lender Requirement',name:'Domestic Content 50%/FEOC',price:0.20,per:'watt',d:'TPO only'},
+  {g:'Preconstruction',name:'Ground Mount',price:0.75,per:'watt',d:'100ft trenching incl.'},
+  {g:'Preconstruction',name:'Ground Mount Trenching (after 100ft)',price:25,per:'ft',d:''},
+  {g:'Preconstruction',name:'Roof Mount Trenching',price:50,per:'ft',d:''},
+  {g:'Preconstruction',name:'Enphase Inline Filters',price:750,per:'ea',d:'Required on Add-On w/ Enphase'},
+  {g:'Preconstruction',name:'Texas Wind Storm Certificate',price:750,per:'ea',d:''},
+  {g:'Preconstruction',name:'Electrical Engineering Stamp',price:300,per:'ea',d:''},
+  {g:'Preconstruction',name:'Structural Engineering Stamp',price:300,per:'ea',d:''},
+  {g:'Construction',name:'Flat Roof (per footing)',price:75,per:'ea',d:''},
+  {g:'Construction',name:'Multiple Arrays (3rd+ array)',price:300,per:'ea',d:''},
+  {g:'Construction',name:'H-Frame',price:1750,per:'ea',d:'Estimate only'},
+  {g:'Construction',name:'Small System PV Only (<=4.5kW)',price:2500,per:'ea',d:''},
+  {g:'Construction',name:'Small System PV+Storage (<=7kW)',price:2500,per:'ea',d:''},
+  {g:'Construction',name:'Metal Roof',price:0.15,per:'watt',d:''},
+  {g:'Construction',name:'Steep Roof (>=45deg)',price:0.20,per:'watt',d:''},
+  {g:'Construction',name:'Tile Roof (Concrete)',price:0.10,per:'watt',d:''},
+  {g:'Post Construction',name:'Annual Maintenance Plan',price:349,per:'ea',d:'Required on all additions/mods'},
+  {g:'Administrative',name:'SolarEdge Extended Warranty',price:400,per:'ea',d:'TPO required'},
+  {g:'Administrative',name:'Change Order',price:500,per:'ea',d:''},
+  {g:'Administrative',name:'Admin Fee (incomplete submission)',price:500,per:'ea',d:''},
+  {g:'Administrative',name:'Cancellation at Install',price:1000,per:'ea',d:''},
+  {g:'Administrative',name:'Retention Fee',price:0.15,per:'watt',d:''},
+  {g:'Administrative',name:'Sunraise Low FICO (<660)',price:0.30,per:'watt',d:''},
+  {g:'Administrative',name:'Lead Fee',price:0.45,per:'watt',d:''},
+  {g:'AHJ & Utility',name:'City of Austin (Austin Energy)',price:500,per:'ea',d:''},
+  {g:'AHJ & Utility',name:'City of Houston',price:350,per:'ea',d:''},
+  {g:'AHJ & Utility',name:'City of San Antonio (CPS Only)',price:500,per:'ea',d:''},
+  {g:'AHJ & Utility',name:'Rough-In Inspection',price:500,per:'ea',d:''},
+  {g:'AHJ & Utility',name:'Floodplain Certification',price:350,per:'ea',d:''},
+  {g:'AHJ & Utility',name:'Electrical Load Calculations',price:300,per:'ea',d:'By AHJ or Utility'},
+  {g:'AHJ & Utility',name:'Post-Installation Letter (AHJ req.)',price:300,per:'ea',d:''},
+];
+let selAdders = [];
 
-  function rowMatchesFilter(row, f) { if (!f) return true; return (row.lender+' '+row.program).toLowerCase().includes(f.toLowerCase()); }
-
-  function cellInput(idx, key, value, type='text', step=null, placeholder='') {
-    const td = document.createElement('td');
-    if (['term','apr','dealerFee','markup'].includes(key)) td.classList.add('right');
-    const input = document.createElement('input');
-    input.type = type; if (step) input.step = step; input.placeholder = placeholder; input.value = (value ?? '');
-    input.oninput = () => { rates[idx][key] = (type === 'number') ? parseNum(input.value) : input.value; renderAll(); };
-    td.appendChild(input); return td;
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById('ratesBody'); tbody.innerHTML = '';
-    const f = document.getElementById('filter').value.trim();
-    rates.forEach((raw, idx) => {
-      const row = normalizeRow(raw); if (!rowMatchesFilter(row, f)) return;
-      const tr = document.createElement('tr');
-      tr.appendChild(cellInput(idx,'lender',row.lender,'text'));
-      tr.appendChild(cellInput(idx,'program',row.program,'text'));
-      tr.appendChild(cellInput(idx,'term',row.term,'number','1'));
-      tr.appendChild(cellInput(idx,'apr',row.apr,'number','0.01'));
-      tr.appendChild(cellInput(idx,'dealerFee',row.dealerFee,'number','0.01'));
-      const mkPlaceholder = defaultMarkupForLender(row.lender).toFixed(2);
-      tr.appendChild(cellInput(idx,'markup',isFinite(row.markup)?row.markup:'','number','0.01',mkPlaceholder));
-      const tdEff = document.createElement('td'); tdEff.className='right mono'; tdEff.textContent=fmtPct(effectiveFee(row)); tr.appendChild(tdEff);
-      const tdBtn = document.createElement('td'); const del = document.createElement('button');
-      del.className='btn danger'; del.textContent='Delete'; del.onclick=()=>{ rates.splice(idx,1); renderAll(); };
-      tdBtn.appendChild(del); tr.appendChild(tdBtn); tbody.appendChild(tr);
+function renderAdders() {
+  const q = ($('adderSearch').value||'').toLowerCase();
+  const c = $('adderGroups'); c.innerHTML = '';
+  const groups = {};
+  ADDERS.forEach(a => {
+    if (q && !a.name.toLowerCase().includes(q) && !a.g.toLowerCase().includes(q)) return;
+    if (!groups[a.g]) groups[a.g] = [];
+    groups[a.g].push(a);
+  });
+  Object.entries(groups).forEach(([g, items]) => {
+    const h = document.createElement('div'); h.className = 'ag-head'; h.textContent = g; c.appendChild(h);
+    items.forEach(a => {
+      const isSel = selAdders.some(s => s.a.name === a.name);
+      const d = document.createElement('div'); d.className = 'ai' + (isSel ? ' sel' : '');
+      const ps = a.per==='watt' ? `$${a.price}/watt` : a.per==='ft' ? `$${a.price}/ft` : `$${a.price.toLocaleString()}`;
+      d.innerHTML = `<div class="ai-name">${esc(a.name)}</div>${a.d?`<div class="ai-detail">${esc(a.d)}</div>`:''}<div class="ai-price">${ps}</div>`;
+      d.onclick = () => toggleAdder(a); c.appendChild(d);
     });
-    renderDropdowns();
-  }
+  });
+}
+function toggleAdder(a) {
+  const i = selAdders.findIndex(s => s.a.name === a.name);
+  if (i >= 0) selAdders.splice(i,1); else selAdders.push({a, qty:1, cp:null});
+  renderAdders(); renderSelAdders();
+}
+function renderSelAdders() {
+  const c = $('selectedAdders'); c.innerHTML = '';
+  if (!selAdders.length) { c.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:11px;padding:10px;">No adders selected</div>'; $('adderTotRow').style.display='none'; return; }
+  let tot = 0;
+  selAdders.forEach((s,i) => {
+    const a = s.a; const row = document.createElement('div'); row.className = 'sa-row';
+    let lt = 0, pd = '';
+    if (a.per==='watt') { const kw=pN($('systemKw').value); lt=isFinite(kw)&&kw>0?a.price*kw*1000*s.qty:0; pd=isFinite(kw)&&kw>0?fmtM(lt):`$${a.price}/watt x need kW`; }
+    else { const up=s.cp!==null?s.cp:a.price; lt=up*s.qty; pd=fmtM(lt); }
+    tot += lt;
+    const needC = (a.per==='ft') || a.price===0;
+    row.innerHTML = `<div class="sa-name">${esc(a.name)}</div>${needC?`<input type="number" class="acust" placeholder="Price" value="${s.cp||''}" oninput="updCP(${i},this.value)" step="0.01"/>`:''}<div style="display:flex;align-items:center;gap:4px;"><span style="font-size:10px;color:var(--muted);">qty</span><input type="number" class="aqty" value="${s.qty}" min="1" oninput="updQty(${i},this.value)"/></div><div class="sa-price">${pd}</div><div class="sa-rm" onclick="rmAdder(${i})">x</div>`;
+    c.appendChild(row);
+  });
+  $('adderTotRow').style.display = 'flex'; $('adderTotVal').textContent = fmtM(tot);
+}
+function updQty(i,v) { selAdders[i].qty=Math.max(1,pN(v)||1); renderSelAdders(); }
+function updCP(i,v) { selAdders[i].cp=pN(v)||null; renderSelAdders(); }
+function rmAdder(i) { selAdders.splice(i,1); renderAdders(); renderSelAdders(); }
+function recalcAdders() { renderSelAdders(); }
 
-  function renderDropdowns() {
-    const lenderSel=document.getElementById('lender'), termSel=document.getElementById('term'), aprSel=document.getElementById('apr');
-    const lenders=uniq(rates.map(r=>(r.lender??'').toString().trim())).sort();
-    const prevLender=lenderSel.value;
-    lenderSel.innerHTML=lenders.map(l=>`<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join('');
-    if(lenders.includes(prevLender)) lenderSel.value=prevLender;
-    const lender=lenderSel.value;
-    const lenderRows=rates.map(normalizeRow).filter(r=>r.lender===lender);
-    const terms=uniq(lenderRows.map(r=>r.term)).sort((a,b)=>a-b);
-    const prevTerm=termSel.value;
-    termSel.innerHTML=terms.map(t=>`<option value="${t}">${t}</option>`).join('');
-    if(terms.map(String).includes(prevTerm)) termSel.value=prevTerm;
-    const term=parseNum(termSel.value);
-    const termRows=lenderRows.filter(r=>r.term===term);
-    const aprs=uniq(termRows.map(r=>r.apr)).sort((a,b)=>a-b);
-    const prevApr=aprSel.value;
-    aprSel.innerHTML=aprs.map(a=>`<option value="${a}">${Number(a).toFixed(2)}</option>`).join('');
-    if(aprs.map(String).includes(prevApr)) aprSel.value=prevApr;
-    calc();
-  }
+// ── RATES DATA ──
+// Each rate stores markup as a real number OR null (meaning: use lender default)
+// null is used instead of NaN because JSON round-trips null correctly
+const DEFAULT_RATES = [
+  // GOODLEAP
+  {lender:'Goodleap',program:'Standard',term:7,apr:7.99,dealerFee:12.74,markup:3.76},
+  {lender:'Goodleap',program:'Solar/Battery Retrofit',term:10,apr:7.99,dealerFee:13.99,markup:2.51},
+  {lender:'Goodleap',program:'Standard',term:20,apr:3.99,dealerFee:30.99,markup:2.01},
+  {lender:'Goodleap',program:'Standard',term:20,apr:4.49,dealerFee:28.49,markup:2.01},
+  {lender:'Goodleap',program:'Standard',term:20,apr:4.99,dealerFee:26.99,markup:2.01},
+  {lender:'Goodleap',program:'Standard',term:20,apr:5.99,dealerFee:20.99,markup:2.01},
+  {lender:'Goodleap',program:'Standard',term:20,apr:6.99,dealerFee:18.74,markup:2.01},
+  {lender:'Goodleap',program:'Standard',term:20,apr:8.99,dealerFee:10.24,markup:2.01},
+  // SUNLIGHT
+  {lender:'Sunlight',program:'Standard',term:10,apr:10.99,dealerFee:0.00,markup:2.01},
+  {lender:'Sunlight',program:'Standard',term:20,apr:11.99,dealerFee:0.00,markup:2.01},
+  {lender:'Sunlight',program:'Batt Only',term:10,apr:10.99,dealerFee:0.00,markup:2.01},
+  {lender:'Sunlight',program:'Batt Only',term:20,apr:11.99,dealerFee:0.00,markup:2.01},
+  // ALMIKA
+  {lender:'Almika',program:'Standard',term:15,apr:3.74,dealerFee:30.87,markup:1.50},
+  {lender:'Almika',program:'Standard',term:15,apr:4.24,dealerFee:29.05,markup:1.50},
+  {lender:'Almika',program:'Standard',term:15,apr:4.74,dealerFee:27.20,markup:1.50},
+  {lender:'Almika',program:'Standard',term:15,apr:5.24,dealerFee:25.32,markup:1.50},
+  {lender:'Almika',program:'Standard',term:15,apr:5.74,dealerFee:23.41,markup:1.50},
+  {lender:'Almika',program:'Standard',term:15,apr:6.24,dealerFee:21.48,markup:1.50},
+  {lender:'Almika',program:'Standard',term:20,apr:3.74,dealerFee:33.77,markup:1.50},
+  {lender:'Almika',program:'Standard',term:20,apr:4.24,dealerFee:31.74,markup:1.50},
+  {lender:'Almika',program:'Standard',term:20,apr:4.74,dealerFee:29.67,markup:1.50},
+  {lender:'Almika',program:'Standard',term:20,apr:5.24,dealerFee:27.56,markup:1.50},
+  {lender:'Almika',program:'Standard',term:20,apr:5.74,dealerFee:25.41,markup:1.50},
+  {lender:'Almika',program:'Standard',term:20,apr:6.24,dealerFee:23.23,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:3.74,dealerFee:35.75,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:4.24,dealerFee:32.36,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:4.74,dealerFee:30.63,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:5.24,dealerFee:28.26,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:5.74,dealerFee:26.75,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:6.24,dealerFee:24.41,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:7.99,dealerFee:19.25,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:8.99,dealerFee:14.25,markup:1.50},
+  {lender:'Almika',program:'Standard',term:25,apr:9.99,dealerFee:10.00,markup:1.50},
+  // SUNGAGE BRIGHTSTART
+  {lender:'Sungage',program:'BrightStart',term:5,apr:2.99,dealerFee:16.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:5,apr:3.99,dealerFee:14.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:5,apr:4.99,dealerFee:12.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:5,apr:5.99,dealerFee:10.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:5,apr:6.99,dealerFee:8.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:5,apr:7.99,dealerFee:5.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:5,apr:8.99,dealerFee:3.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:5,apr:9.74,dealerFee:0.00,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:10,apr:2.99,dealerFee:23.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:10,apr:3.99,dealerFee:20.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:10,apr:4.99,dealerFee:17.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:10,apr:5.99,dealerFee:13.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:10,apr:6.99,dealerFee:9.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:10,apr:7.99,dealerFee:6.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:10,apr:8.99,dealerFee:2.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:15,apr:2.99,dealerFee:29.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:15,apr:3.99,dealerFee:25.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:15,apr:4.99,dealerFee:20.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:15,apr:5.99,dealerFee:16.74,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:15,apr:6.99,dealerFee:11.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:15,apr:7.99,dealerFee:7.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:15,apr:8.99,dealerFee:0.00,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:20,apr:3.99,dealerFee:28.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:20,apr:4.99,dealerFee:23.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:20,apr:5.99,dealerFee:18.49,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:20,apr:6.99,dealerFee:12.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:20,apr:7.99,dealerFee:7.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:20,apr:8.99,dealerFee:0.00,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:25,apr:3.99,dealerFee:29.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:25,apr:4.99,dealerFee:24.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:25,apr:5.99,dealerFee:18.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:25,apr:6.99,dealerFee:13.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:25,apr:7.99,dealerFee:7.99,markup:2.00},
+  {lender:'Sungage',program:'BrightStart',term:25,apr:8.99,dealerFee:0.00,markup:2.00},
+  // SUNGAGE SUNRISE
+  {lender:'Sungage',program:'Sunrise',term:20,apr:3.99,dealerFee:30.99,markup:2.00},
+  {lender:'Sungage',program:'Sunrise',term:20,apr:4.99,dealerFee:24.99,markup:2.00},
+  {lender:'Sungage',program:'Sunrise',term:20,apr:5.99,dealerFee:20.99,markup:2.00},
+  {lender:'Sungage',program:'Sunrise',term:25,apr:3.99,dealerFee:32.99,markup:2.00},
+  {lender:'Sungage',program:'Sunrise',term:25,apr:4.99,dealerFee:27.99,markup:2.00},
+  {lender:'Sungage',program:'Sunrise',term:25,apr:5.99,dealerFee:20.99,markup:2.00},
+  // SUNSTONE STANDARD
+  {lender:'SunStone',program:'Standard',term:5,apr:4.25,dealerFee:13.65,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:5,apr:5.75,dealerFee:10.75,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:5,apr:7.50,dealerFee:7.25,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:5,apr:0.00,dealerFee:24.50,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:8,apr:4.99,dealerFee:17.00,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:8,apr:6.55,dealerFee:12.25,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:8,apr:8.15,dealerFee:7.25,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:10,apr:5.50,dealerFee:17.33,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:10,apr:6.90,dealerFee:12.75,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:10,apr:8.25,dealerFee:7.50,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:10,apr:9.75,dealerFee:1.00,markup:0.00},
+  {lender:'SunStone',program:'Standard 10/20',term:20,apr:5.75,dealerFee:21.00,markup:0.00},
+  {lender:'SunStone',program:'Standard 10/20',term:20,apr:7.33,dealerFee:13.65,markup:0.00},
+  {lender:'SunStone',program:'Standard 10/20',term:20,apr:8.60,dealerFee:7.50,markup:0.00},
+  {lender:'SunStone',program:'Standard 10/20',term:20,apr:9.75,dealerFee:1.00,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:15,apr:5.75,dealerFee:21.00,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:15,apr:7.25,dealerFee:14.25,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:15,apr:8.66,dealerFee:7.75,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:20,apr:5.95,dealerFee:22.35,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:20,apr:7.33,dealerFee:15.45,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:20,apr:8.75,dealerFee:7.75,markup:0.00},
+  {lender:'SunStone',program:'Standard',term:20,apr:9.75,dealerFee:1.00,markup:0.00},
+  // SUNSTONE SPECIAL
+  {lender:'SunStone',program:'Special',term:5,apr:4.25,dealerFee:13.65,markup:0.00},
+  {lender:'SunStone',program:'Special',term:5,apr:5.75,dealerFee:10.75,markup:0.00},
+  {lender:'SunStone',program:'Special',term:5,apr:7.50,dealerFee:7.25,markup:0.00},
+  {lender:'SunStone',program:'Special',term:5,apr:0.00,dealerFee:22.10,markup:0.00},
+  {lender:'SunStone',program:'Special',term:8,apr:4.25,dealerFee:16.75,markup:0.00},
+  {lender:'SunStone',program:'Special',term:8,apr:6.25,dealerFee:11.65,markup:0.00},
+  {lender:'SunStone',program:'Special',term:8,apr:7.85,dealerFee:7.25,markup:0.00},
+  {lender:'SunStone',program:'Special',term:10,apr:4.75,dealerFee:17.00,markup:0.00},
+  {lender:'SunStone',program:'Special',term:10,apr:6.35,dealerFee:12.25,markup:0.00},
+  {lender:'SunStone',program:'Special',term:10,apr:7.99,dealerFee:7.25,markup:0.00},
+  {lender:'SunStone',program:'Special',term:10,apr:9.65,dealerFee:1.00,markup:0.00},
+  {lender:'SunStone',program:'Special 10/20',term:20,apr:4.75,dealerFee:21.25,markup:0.00},
+  {lender:'SunStone',program:'Special 10/20',term:20,apr:6.85,dealerFee:13.50,markup:0.00},
+  {lender:'SunStone',program:'Special 10/20',term:20,apr:8.49,dealerFee:7.25,markup:0.00},
+  {lender:'SunStone',program:'Special 10/20',term:20,apr:9.70,dealerFee:1.00,markup:0.00},
+  {lender:'SunStone',program:'Special',term:15,apr:4.99,dealerFee:20.35,markup:0.00},
+  {lender:'SunStone',program:'Special',term:15,apr:6.99,dealerFee:13.25,markup:0.00},
+  {lender:'SunStone',program:'Special',term:15,apr:8.49,dealerFee:7.50,markup:0.00},
+  {lender:'SunStone',program:'Special',term:20,apr:4.99,dealerFee:22.35,markup:0.00},
+  {lender:'SunStone',program:'Special',term:20,apr:6.99,dealerFee:14.50,markup:0.00},
+  {lender:'SunStone',program:'Special',term:20,apr:8.49,dealerFee:7.50,markup:0.00},
+  {lender:'SunStone',program:'Special',term:20,apr:9.70,dealerFee:1.00,markup:0.00},
+];
 
-  function findRate(lender, term, apr) {
-    const t=parseNum(term), a=parseNum(apr);
-    return rates.map(normalizeRow).find(r=>r.lender===lender&&r.term===t&&Number(r.apr).toFixed(2)===Number(a).toFixed(2))||null;
-  }
+// ── STORAGE ──
+// NOTE: markup is always stored as a real number (e.g. 2.00, 0.00)
+// null is NEVER used — every rate has an explicit markup value
+const RKEY = 'fastrac_rates_v5';
+const LKEY = 'fastrac_log_v2';
+let rates = [];
+let auditLog = [];
 
-  function makeVerdict(ok, warn, label, detail) {
-    const cls=ok?'ok':(warn?'warn':'bad'); const icon=ok?'✅':(warn?'⚠️':'❌');
-    return `<div class="verdict"><span>${icon}</span><span class="pill ${cls}">${label}</span>${detail?`<span style="color:var(--muted);font-size:11px;margin-left:4px;">${detail}</span>`:''}</div>`;
-  }
-
-  function setKvClass(id, cls) { document.getElementById(id).className='kv'+(cls?' '+cls:''); }
-
-  function calc() {
-    const subtotal=parseNum(document.getElementById('subtotal').value);
-    const lender=document.getElementById('lender').value;
-    const term=document.getElementById('term').value;
-    const apr=document.getElementById('apr').value;
-    const proposalGross=parseNum(document.getElementById('proposalGross').value);
-    const tol=Math.max(0,parseNum(document.getElementById('tolerance').value)||0);
-    const row=findRate(lender,term,apr);
-    const get=id=>document.getElementById(id);
-
-    get('status').innerHTML=''; get('summaryHint').textContent='';
-    ['diffPct','impliedEff','impliedDealer','feeDrift'].forEach(id=>get(id).textContent='—');
-    ['diffPctDetail','impliedEffDetail','impliedDealerDetail','feeDriftDetail'].forEach(id=>get(id).textContent='');
-    ['diffPctCard','impliedEffCard','impliedDealerCard','feeDriftCard'].forEach(id=>setKvClass(id,''));
-    get('auditBody').innerHTML='<tr><td colspan="5" style="color:var(--muted);font-size:12px;padding:10px 8px;">Enter subtotal and proposal gross to see audit results.</td></tr>';
-
-    if (!row) { ['dealerFeePct','markupPct','effFee','expectedGross','dealerFeeDollars','diff'].forEach(id=>get(id).textContent='—'); return; }
-
-    const mk=isFinite(row.markup)?row.markup:defaultMarkupForLender(row.lender);
-    const eff=effectiveFee(row);
-    get('dealerFeePct').textContent=fmtPct(row.dealerFee);
-    get('markupPct').textContent=fmtPct(mk);
-    get('effFee').textContent=fmtPct(eff);
-
-    let expectedGross=NaN, feeDol=NaN;
-    if (isFinite(subtotal)&&subtotal>0&&isFinite(eff)) { expectedGross=round2(subtotal/(1-(eff/100))); feeDol=round2(expectedGross-subtotal); }
-    get('expectedGross').textContent=isFinite(expectedGross)?fmtMoney(expectedGross):'—';
-    get('dealerFeeDollars').textContent=isFinite(feeDol)?fmtMoney(feeDol):'—';
-
-    let diff=NaN, diffPct=NaN;
-    if (isFinite(proposalGross)&&proposalGross>0&&isFinite(expectedGross)) {
-      diff=round2(proposalGross-expectedGross);
-      diffPct=round4((diff/expectedGross)*100);
-      get('diff').textContent=fmtMoney(diff);
-      const dolOk=Math.abs(diff)<=tol; const dolWarn=!dolOk&&Math.abs(diff)<=tol*3;
-      const pill=document.createElement('span');
-      pill.className='pill '+(dolOk?'ok':(dolWarn?'warn':'bad'));
-      pill.textContent=dolOk?`MATCH (±${fmtMoney(tol)})`:(dolWarn?'NEAR MISS':'MISMATCH');
-      get('status').appendChild(pill);
-      const detail=document.createElement('div'); detail.className='hint'; detail.style.marginTop='8px';
-      detail.textContent=dolOk?'Proposal gross matches expected gross within tolerance.':'Proposal gross differs from expected gross. Check implied fees below.';
-      get('status').appendChild(detail);
-    } else { get('diff').textContent='—'; }
-
-    let impliedEff=NaN, impliedDealer=NaN, feeDrift=NaN;
-    if (isFinite(proposalGross)&&proposalGross>0&&isFinite(subtotal)&&subtotal>0) {
-      impliedEff=round4((1-subtotal/proposalGross)*100);
-      impliedDealer=round4(impliedEff-mk);
-      feeDrift=round4(impliedDealer-row.dealerFee);
-
-      if (isFinite(diffPct)) {
-        const pctOk=Math.abs(diffPct)<0.1; const pctWarn=!pctOk&&Math.abs(diffPct)<0.5;
-        get('diffPct').textContent=fmtPct4(diffPct);
-        get('diffPctDetail').textContent=Math.abs(diffPct)<0.1?'Within 0.1% — looks good':`${Math.abs(diffPct).toFixed(4)}% off from expected`;
-        setKvClass('diffPctCard',pctOk?'':(pctWarn?'highlight-warn':'highlight-bad'));
-      }
-
-      const effDiff=round4(impliedEff-eff);
-      get('impliedEff').textContent=fmtPct4(impliedEff);
-      get('impliedEffDetail').textContent=`Table: ${fmtPct(eff)} | Drift: ${effDiff>=0?'+':''}${effDiff.toFixed(4)}%`;
-      const effOk=Math.abs(effDiff)<0.05; const effWarn=!effOk&&Math.abs(effDiff)<0.25;
-      setKvClass('impliedEffCard',effOk?'':(effWarn?'highlight-warn':'highlight-bad'));
-
-      get('impliedDealer').textContent=fmtPct4(impliedDealer);
-      get('impliedDealerDetail').textContent=`Table: ${fmtPct(row.dealerFee)} | Markup used: ${fmtPct(mk)}`;
-      const dOk=Math.abs(feeDrift)<0.05; const dWarn=!dOk&&Math.abs(feeDrift)<0.25;
-      setKvClass('impliedDealerCard',dOk?'':(dWarn?'highlight-warn':'highlight-bad'));
-
-      get('feeDrift').textContent=isFinite(feeDrift)?(feeDrift>=0?'+':'')+feeDrift.toFixed(4)+'%':'—';
-      get('feeDriftDetail').textContent=feeDrift>0.05?'Lender charging MORE than table rate':feeDrift<-0.05?'Lender charging LESS than table rate (check markup)':'Dealer fee matches table rate';
-      setKvClass('feeDriftCard',dOk?'':(dWarn?'highlight-warn':'highlight-bad'));
-
-      const auditRows=[
-        { check:'Gross $ Match',           expected:fmtMoney(expectedGross), actual:fmtMoney(proposalGross),    delta:fmtMoney(diff),        ok:Math.abs(diff)<=tol,        warn:Math.abs(diff)<=tol*3,        detail:Math.abs(diff)<=tol?'':`>${fmtMoney(tol)} tolerance` },
-        { check:'Gross % Variance',        expected:'< 0.10%',               actual:fmtPct4(diffPct),           delta:fmtPct4(diffPct),      ok:Math.abs(diffPct)<0.1,      warn:Math.abs(diffPct)<0.5,        detail:'' },
-        { check:'Effective Fee %',         expected:fmtPct(eff),             actual:fmtPct4(impliedEff),        delta:(effDiff>=0?'+':'')+effDiff.toFixed(4)+'%', ok:Math.abs(effDiff)<0.05, warn:Math.abs(effDiff)<0.25, detail:'' },
-        { check:'Dealer Fee % (markup removed)', expected:fmtPct(row.dealerFee), actual:fmtPct4(impliedDealer), delta:(feeDrift>=0?'+':'')+feeDrift.toFixed(4)+'%', ok:dOk, warn:dWarn, detail:feeDrift>0.05?'Lender overcharging':feeDrift<-0.05?'Check markup':'' },
-        { check:'Markup Applied',          expected:fmtPct(mk),              actual:fmtPct(mk),                 delta:'+0.00%',              ok:true,                       warn:false,                        detail:'Applied externally by Hub' },
-      ];
-      const tbody=get('auditBody'); tbody.innerHTML='';
-      auditRows.forEach(r=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`<td style="font-weight:600;">${r.check}</td><td class="right mono">${r.expected}</td><td class="right mono">${r.actual}</td><td class="right mono">${r.delta}</td><td>${makeVerdict(r.ok,r.warn,r.ok?'OK':(r.warn?'Review':'FLAG'),r.detail)}</td>`;
-        tbody.appendChild(tr);
-      });
+function loadRates() {
+  try {
+    const stored = localStorage.getItem(RKEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length) { rates = parsed; return; }
     }
+  } catch(e) {}
+  rates = DEFAULT_RATES.map(r => Object.assign({}, r));
+}
+function saveRates() { localStorage.setItem(RKEY, JSON.stringify(rates)); }
+function loadLog() {
+  try { const l = JSON.parse(localStorage.getItem(LKEY)); if (Array.isArray(l)) { auditLog = l; return; } } catch(e) {}
+  auditLog = [];
+}
+function saveLogs() { localStorage.setItem(LKEY, JSON.stringify(auditLog)); }
 
-    const parts=[];
-    if(isFinite(subtotal)) parts.push(`Subtotal ${fmtMoney(subtotal)}`);
-    parts.push(`${row.lender} • ${row.program||'Program'} • ${row.term}yr • ${Number(row.apr).toFixed(2)}%`);
-    parts.push(`DealerFee ${fmtPct(row.dealerFee)} • Markup ${fmtPct(mk)} • Effective ${fmtPct(eff)}`);
-    if(isFinite(expectedGross)) parts.push(`ExpectedGross ${fmtMoney(expectedGross)} • Fee$ ${fmtMoney(feeDol)}`);
-    if(isFinite(proposalGross)) parts.push(`ProposalGross ${fmtMoney(proposalGross)} • Diff ${isFinite(diff)?fmtMoney(diff):'—'} (${isFinite(diffPct)?fmtPct4(diffPct):'—'})`);
-    if(isFinite(impliedEff))    parts.push(`ImpliedEff ${fmtPct4(impliedEff)} • ImpliedDealer ${fmtPct4(impliedDealer)} • FeeDrift ${isFinite(feeDrift)?(feeDrift>=0?'+':'')+feeDrift.toFixed(4)+'%':'—'}`);
-    get('summaryHint').textContent=parts.join(' | ');
+// ── RATE LOOKUP ──
+// getMarkup: reads markup directly from raw rate object — always a number
+function getMarkup(rawRate, lender) {
+  // markup is always explicitly set in our data — just read it
+  const m = rawRate.markup;
+  if (typeof m === 'number' && isFinite(m)) return m;
+  // Fallback to UI default (should never be needed with clean data)
+  return getDefaultMarkup(lender);
+}
+
+function getDefaultMarkup(lender) {
+  const l = String(lender || '').toLowerCase();
+  if (l.includes('sungage'))  return parseFloat($('mkSungage').value)  || 2.00;
+  if (l.includes('sunlight')) return parseFloat($('mkSunlight').value) || 2.01;
+  if (l.includes('goodleap')) return parseFloat($('mkGoodleap').value) || 2.01;
+  if (l.includes('almika'))   return parseFloat($('mkAlmika').value)   || 1.50;
+  if (l.includes('sunstone')) return parseFloat($('mkSunstone').value) || 0.00;
+  return parseFloat($('mkOther').value) || 0.00;
+}
+
+function findRawRate(lender, term, apr) {
+  const t = parseFloat(term), a = parseFloat(apr);
+  return rates.find(r =>
+    String(r.lender).trim() === lender &&
+    parseFloat(r.term) === t &&
+    parseFloat(r.apr).toFixed(2) === a.toFixed(2)
+  ) || null;
+}
+
+// ── DROPDOWNS ──
+function buildLenders() {
+  const sel = $('lender'), prev = sel.value;
+  const lenders = uniq(rates.map(r => String(r.lender||'').trim())).sort();
+  sel.innerHTML = lenders.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  if (lenders.includes(prev)) sel.value = prev;
+}
+function refreshTerms() {
+  const lender = $('lender').value;
+  const sel = $('term'), prev = sel.value;
+  const rows = rates.filter(r => String(r.lender).trim() === lender);
+  const terms = uniq(rows.map(r => parseFloat(r.term))).sort((a,b) => a-b);
+  sel.innerHTML = terms.map(t => `<option value="${t}">${t}</option>`).join('');
+  if (terms.map(String).includes(prev)) sel.value = prev;
+}
+function refreshAprs() {
+  const lender = $('lender').value, term = parseFloat($('term').value);
+  const sel = $('apr'), prev = sel.value;
+  const rows = rates.filter(r => String(r.lender).trim()===lender && parseFloat(r.term)===term);
+  const aprs = uniq(rows.map(r => parseFloat(r.apr))).sort((a,b) => a-b);
+  sel.innerHTML = aprs.map(a => {
+    const row = rows.find(r => parseFloat(r.apr)===a);
+    return `<option value="${a}">${a.toFixed(2)}% — ${esc(row ? row.program : '')}</option>`;
+  }).join('');
+  if (aprs.map(String).includes(prev)) sel.value = prev;
+}
+function onLenderChange() { refreshTerms(); refreshAprs(); calc(); }
+function onTermChange()   { refreshAprs(); calc(); }
+
+function buildProducts() {
+  const sel = $('productSelect'), prev = sel.value;
+  sel.innerHTML = '<option value="">— Pick a saved loan product —</option>';
+  const seen = new Set();
+  rates.forEach(r => {
+    const key = `${r.lender}||${r.program}||${r.term}||${r.apr}`;
+    if (seen.has(key)) return; seen.add(key);
+    const df = parseFloat(r.dealerFee), mk = getMarkup(r, r.lender);
+    const eff = r2(df + mk);
+    const lbl = `${r.lender} · ${r.program} · ${r.term}yr · ${parseFloat(r.apr).toFixed(2)}% · Eff:${fmtP(eff)}`;
+    sel.innerHTML += `<option value="${esc(key)}">${esc(lbl)}</option>`;
+  });
+  if (prev) sel.value = prev;
+}
+function applyProduct() {
+  const v = $('productSelect').value; if (!v) return;
+  const [lender, program, term, apr] = v.split('||');
+  [...$('lender').options].forEach(o => { if(o.value===lender) $('lender').value=lender; });
+  refreshTerms();
+  [...$('term').options].forEach(o => { if(o.value===term) $('term').value=term; });
+  refreshAprs();
+  [...$('apr').options].forEach(o => { if(o.value===apr) $('apr').value=apr; });
+  calc();
+}
+
+// ── RATES TABLE ──
+function renderTable() {
+  const tbody = $('ratesBody'); tbody.innerHTML = '';
+  const f = ($('filterRates').value||'').toLowerCase();
+  rates.forEach((raw, idx) => {
+    if (f && !(String(raw.lender)+' '+String(raw.program)).toLowerCase().includes(f)) return;
+    const tr = document.createElement('tr');
+    const cell = (key, val, type='text', step=null) => {
+      const td = document.createElement('td');
+      if (['term','apr','dealerFee','markup'].includes(key)) td.className = 'tr';
+      const inp = document.createElement('input');
+      inp.type = type; if (step) inp.step = step; inp.value = val !== null && val !== undefined ? val : '';
+      inp.oninput = () => {
+        rates[idx][key] = (type==='number') ? parseFloat(inp.value) : inp.value;
+        if (isNaN(rates[idx][key])) rates[idx][key] = 0;
+        renderAll();
+      };
+      td.appendChild(inp); return td;
+    };
+    tr.appendChild(cell('lender', raw.lender));
+    tr.appendChild(cell('program', raw.program));
+    tr.appendChild(cell('term', raw.term, 'number', '1'));
+    tr.appendChild(cell('apr', raw.apr, 'number', '0.01'));
+    tr.appendChild(cell('dealerFee', raw.dealerFee, 'number', '0.01'));
+    tr.appendChild(cell('markup', raw.markup, 'number', '0.01'));
+    const effTd = document.createElement('td');
+    effTd.className = 'tr mono'; effTd.style.color = 'var(--orange)';
+    const mk = getMarkup(raw, raw.lender);
+    effTd.textContent = fmtP(r2(parseFloat(raw.dealerFee||0) + mk));
+    tr.appendChild(effTd);
+    const delTd = document.createElement('td');
+    const del = document.createElement('button'); del.className='btn btn-danger btn-sm'; del.textContent='x';
+    del.onclick = () => { rates.splice(idx,1); renderAll(); };
+    delTd.appendChild(del); tr.appendChild(delTd);
+    tbody.appendChild(tr);
+  });
+  buildLenders(); refreshTerms(); refreshAprs(); buildProducts();
+}
+function addRateRow() { rates.unshift({lender:'',program:'',term:10,apr:0,dealerFee:0,markup:0}); renderAll(); }
+function resetRates() {
+  if (!confirm('Reset to built-in rates?')) return;
+  localStorage.removeItem(RKEY); loadRates(); renderAll();
+}
+
+// ── CALC ──
+function clearDisplay() {
+  ['vDf','vMk','vEff','vExpG','vExpFee','vDiff','vDiffPct','vImpEff','vImpDf','vDrift'].forEach(id => $(id).textContent = '—');
+  ['stDf','stMk','stEff','stExpG','stExpFee','stDiff','stDiffPct','stImpEff','stImpDf','stDrift'].forEach(id => $(id).className = 'stat');
+  ['vDiffVerdict','vDiffPctSub','vImpEffSub','vImpDfSub','vDriftSub'].forEach(id => $(id).textContent = '');
+  ['displayDf','displayMk','displayEff'].forEach(id => { if($(id)) { $(id).textContent='—'; $(id).style.opacity='1'; } });
+  if ($('displayEffBreakdown')) $('displayEffBreakdown').textContent = '';
+  $('achBody').innerHTML = '<div class="ach-row"><div class="ach-cell" style="grid-column:1/-1;color:var(--muted);">Enter deal values and click Reconcile to run.</div></div>';
+  $('sumHint').textContent = '';
+}
+
+function calc() {
+  if (dealMode === 'cash') { clearDisplay(); return; }
+
+  const sub = parseFloat($('subtotal').value);
+  const pg  = parseFloat($('proposalGross').value);
+  const lender = $('lender').value;
+  const term   = $('term').value;
+  const apr    = $('apr').value;
+
+  const raw = findRawRate(lender, term, apr);
+  if (!raw) { clearDisplay(); return; }
+
+  // ── Resolve dealer fee and markup ──
+  const overrideDfVal = $('overrideDf').value.trim();
+  const overrideMkVal = $('overrideMk').value.trim();
+  const df = overrideDfVal !== '' ? parseFloat(overrideDfVal) : parseFloat(raw.dealerFee);
+  const mk = overrideMkVal !== '' ? parseFloat(overrideMkVal) : getMarkup(raw, lender);
+  const eff = r2(df + mk);
+
+  // ── Update stat cards ──
+  $('vDf').textContent  = fmtP(df);
+  $('vMk').textContent  = fmtP(mk);
+  $('vEff').textContent = fmtP(eff);
+
+  // ── Update prominent display boxes (always show table values, dim if overridden) ──
+  const tableDf  = parseFloat(raw.dealerFee);
+  const tableMk  = getMarkup(raw, lender);
+  const tableEff = r2(tableDf + tableMk);
+  if ($('displayDf'))  { $('displayDf').textContent  = fmtP(tableDf);  $('displayDf').style.opacity  = overrideDfVal!==''?'0.4':'1'; }
+  if ($('displayMk'))  { $('displayMk').textContent  = fmtP(tableMk);  $('displayMk').style.opacity  = overrideMkVal!==''?'0.4':'1'; }
+  if ($('displayEff')) { $('displayEff').textContent = fmtP(tableEff); }
+  if ($('displayEffBreakdown')) $('displayEffBreakdown').textContent = fmtP(tableDf) + ' + ' + fmtP(tableMk) + ' = ' + fmtP(tableEff);
+
+  // ── Expected gross ──
+  let expG = NaN, feeDol = NaN;
+  if (isFinite(sub) && sub > 0 && eff < 100) {
+    expG   = r2(sub / (1 - eff / 100));
+    feeDol = r2(expG - sub);
+  }
+  $('vExpG').textContent   = isFinite(expG)   ? fmtM(expG)   : '—';
+  $('vExpFee').textContent = isFinite(feeDol) ? fmtM(feeDol) : '—';
+
+  // ── Funded amount warning ──
+  const fw = $('fundedWarning');
+  if (fw) {
+    const showWarn = isFinite(pg) && isFinite(sub) && sub>0 && pg===sub && eff>0;
+    fw.style.display = showWarn ? 'block' : 'none';
+    fw.textContent   = showWarn ? `Funded amount equals subtotal — with ${fmtP(eff)} effective fee, expected gross should be ${fmtM(expG)}` : '';
   }
 
-  function csvEsc(s){const str=String(s??'');if(/[",\n]/.test(str))return'"'+str.replace(/"/g,'""')+'"';return str;}
-  function exportRatesCsv(){const header=['lender','program','term','apr','dealerFee','markup'];const lines=[header.join(',')];rates.map(normalizeRow).forEach(r=>{const mk=isFinite(r.markup)?r.markup:'';lines.push([csvEsc(r.lender),csvEsc(r.program),r.term,r.apr,r.dealerFee,mk].join(','));});downloadBlob(lines.join('\n'),'rates.csv','text/csv');}
-  function downloadTemplate(){downloadBlob(`lender,program,term,apr,dealerFee,markup\nSungage,Sunrise,25,5.99,20.99,\nSunlight,Standard,20,11.99,2.01,\nGoodleap,Standard,7,7.99,16.50,\n`,'rates_template.csv','text/csv');}
-  function downloadBlob(content,filename,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
+  // ── Variance ──
+  let diff = NaN, diffPct = NaN;
+  if (isFinite(pg) && pg>0 && isFinite(expG)) {
+    diff    = r2(pg - expG);
+    diffPct = r4((diff / expG) * 100);
+  }
 
-  function parseCsv(text){const rows=[];let cur=[],field='',inQuotes=false;for(let i=0;i<text.length;i++){const ch=text[i];if(inQuotes){if(ch==='"'&&text[i+1]==='"'){field+='"';i++;}else if(ch==='"')inQuotes=false;else field+=ch;}else{if(ch==='"')inQuotes=true;else if(ch===','){cur.push(field);field='';}else if(ch==='\n'){cur.push(field);rows.push(cur);cur=[];field='';}else if(ch==='\r'){}else field+=ch;}}cur.push(field);rows.push(cur);return rows.filter(r=>r.some(x=>String(x).trim()!==''));}
+  // ── Implied fees (back-calculated from funded amount) ──
+  let impEff = NaN, impDf = NaN, drift = NaN;
+  if (isFinite(pg) && pg>0 && isFinite(sub) && sub>0) {
+    impEff = r4((1 - sub/pg) * 100);
+    impDf  = r4(impEff - mk);
+    drift  = r4(impDf - df);
+  }
 
-  function importCsv(file){const reader=new FileReader();reader.onload=()=>{const rows=parseCsv(reader.result);if(!rows.length)return;const head=rows[0].map(h=>String(h).trim().toLowerCase());const idx=name=>head.indexOf(name.toLowerCase());const required=['lender','program','term','apr','dealerfee','markup'];if(!required.every(k=>idx(k)!==-1)){alert('CSV header must include: '+required.join(', '));return;}const next=[];for(let r=1;r<rows.length;r++){const row=rows[r];next.push({lender:row[idx('lender')]??'',program:row[idx('program')]??'',term:parseNum(row[idx('term')]),apr:parseNum(row[idx('apr')]),dealerFee:parseNum(row[idx('dealerfee')]),markup:parseNum(row[idx('markup')])});}rates=next;renderAll();};reader.readAsText(file);}
+  // ── Display variance $ ──
+  $('vDiff').textContent = isFinite(diff) ? fmtM(diff) : '—';
+  if (isFinite(diff)) {
+    const sameAsSub = isFinite(sub) && sub>0 && pg===sub && eff>0;
+    const ok = diff===0 && !sameAsSub;
+    $('stDiff').className = 'stat ' + (ok ? 'ok' : 'bad');
+    if (sameAsSub) {
+      $('vDiffVerdict').innerHTML = `<span class="pill pill-bad">x Discrepancy — funded = subtotal but eff fee is ${fmtP(eff)}, expected ${fmtM(expG)}</span>`;
+    } else {
+      $('vDiffVerdict').innerHTML = ok
+        ? '<span class="pill pill-ok">Reconciled</span>'
+        : `<span class="pill pill-bad">x Discrepancy — ${fmtM(diff)}</span>`;
+    }
+  }
 
-  function renderAll(){renderTable();calc();}
+  // ── Variance % ──
+  if (isFinite(diffPct)) {
+    $('vDiffPct').textContent = fmtP4(diffPct);
+    $('stDiffPct').className  = 'stat ' + (diffPct===0 ? 'ok' : 'bad');
+    $('vDiffPctSub').textContent = diffPct===0 ? 'No variance' : 'FLAG — variance must be zero';
+  }
 
-  document.getElementById('filter').addEventListener('input',renderTable);
-  ['mkSungage','mkSunlight','mkGoodleap','mkOther','tolerance'].forEach(id=>document.getElementById(id).addEventListener('input',renderAll));
-  document.getElementById('addRow').onclick=()=>{rates.unshift({lender:'',program:'',term:10,apr:0,dealerFee:0,markup:NaN});renderAll();};
-  document.getElementById('saveRates').onclick=()=>{saveRates();alert('Saved rates in this browser.');};
-  document.getElementById('resetRates').onclick=()=>{if(!confirm('Reset rates to defaults?'))return;localStorage.removeItem(STORAGE_KEY);loadRates();renderAll();};
-  document.getElementById('csvFile').addEventListener('change',(e)=>{const f=e.target.files?.[0];if(f)importCsv(f);e.target.value='';});
-  document.getElementById('exportCsv').onclick=exportRatesCsv;
-  document.getElementById('downloadTemplate').onclick=downloadTemplate;
-  ['subtotal','proposalGross'].forEach(id=>document.getElementById(id).addEventListener('input',calc));
-  ['lender','term','apr'].forEach(id=>document.getElementById(id).addEventListener('change',renderDropdowns));
-  document.getElementById('recalc').onclick=calc;
-  document.getElementById('copySummary').onclick=async()=>{const text=document.getElementById('summaryHint').textContent||'';try{await navigator.clipboard.writeText(text);alert('Copied.');}catch{alert('Could not copy (browser permission).');}};
+  // ── Implied effective fee ──
+  if (isFinite(impEff)) {
+    const ed = r4(impEff - eff);
+    $('vImpEff').textContent    = fmtP4(impEff);
+    $('stImpEff').className     = 'stat ' + (ed===0 ? 'ok' : 'bad');
+    $('vImpEffSub').textContent = `Table: ${fmtP(eff)} | Drift: ${ed>=0?'+':''}${ed.toFixed(4)}%`;
+  }
 
-  loadRates(); renderTable();
-  const lenderSel=document.getElementById('lender');
-  if(!lenderSel.options.length)lenderSel.innerHTML='<option value="">(no rates)</option>';
-  renderDropdowns();
+  // ── Implied dealer fee ──
+  if (isFinite(impDf)) {
+    $('vImpDf').textContent    = fmtP4(impDf);
+    $('stImpDf').className     = 'stat ' + (drift===0 ? 'ok' : 'bad');
+    $('vImpDfSub').textContent = `Table: ${fmtP(df)} | Markup: ${fmtP(mk)}`;
+  }
+
+  // ── Fee drift ──
+  if (isFinite(drift)) {
+    $('vDrift').textContent    = (drift>=0?'+':'') + drift.toFixed(4) + '%';
+    $('stDrift').className     = 'stat ' + (drift===0 ? 'ok' : 'bad');
+    $('vDriftSub').textContent = drift>0 ? 'Lender charging above table rate' : drift<0 ? 'Check markup settings' : 'Matches table rate';
+  }
+
+  // ── Checklist ──
+  if (isFinite(diff) && isFinite(impEff)) {
+    const ed = r4(impEff - eff);
+    const sameAsSub2 = isFinite(sub) && sub>0 && pg===sub && eff>0;
+    const checks = [
+      {c:'Funded Amount vs Expected',   exp:fmtM(expG),   act:fmtM(pg),       delta:fmtM(diff),                           ok:diff===0 && !sameAsSub2},
+      {c:'Variance %',                  exp:'0.0000%',    act:fmtP4(diffPct), delta:fmtP4(diffPct),                       ok:diffPct===0},
+      {c:'Implied vs Expected Eff. Fee',exp:fmtP(eff),    act:fmtP4(impEff),  delta:(ed>=0?'+':'')+ed.toFixed(4)+'%',    ok:ed===0},
+      {c:'Implied vs Table Dealer Fee', exp:fmtP(df),     act:fmtP4(impDf),   delta:(drift>=0?'+':'')+drift.toFixed(4)+'%', ok:drift===0},
+      {c:'Markup (applied externally)', exp:fmtP(mk),     act:fmtP(mk),       delta:'+0.00%',                             ok:true},
+    ];
+    const body = $('achBody'); body.innerHTML = '';
+    checks.forEach(ch => {
+      const d = document.createElement('div'); d.className = 'ach-row';
+      const pill = ch.ok ? '<span class="pill pill-ok">OK</span>' : '<span class="pill pill-bad">FLAG</span>';
+      d.innerHTML = `<div class="ach-cell" style="font-weight:600;">${ch.c}</div><div class="ach-cell r mono">${ch.exp}</div><div class="ach-cell r mono">${ch.act}</div><div class="ach-cell r mono">${ch.delta}</div><div class="ach-cell">${pill}</div>`;
+      body.appendChild(d);
+    });
+  }
+
+  // ── Summary text ──
+  const parts = [];
+  if (isFinite(sub))   parts.push(`Subtotal:${fmtM(sub)}`);
+  parts.push(`${raw.lender} ${raw.program} ${raw.term}yr ${parseFloat(raw.apr).toFixed(2)}%`);
+  parts.push(`DF:${fmtP(df)} Mk:${fmtP(mk)} Eff:${fmtP(eff)}`);
+  if (isFinite(expG))  parts.push(`ExpGross:${fmtM(expG)} Fee$:${fmtM(feeDol)}`);
+  if (isFinite(pg))    parts.push(`FundedAmt:${fmtM(pg)} Variance:${isFinite(diff)?fmtM(diff):'—'} (${isFinite(diffPct)?fmtP4(diffPct):'—'})`);
+  if (isFinite(impEff)) parts.push(`ImpEff:${fmtP4(impEff)} ImpDF:${fmtP4(impDf)} Drift:${isFinite(drift)?(drift>=0?'+':'')+drift.toFixed(4)+'%':'—'}`);
+  $('sumHint').textContent = parts.join(' | ');
+}
+
+function clearCalc() {
+  ['subtotal','proposalGross','repName','dealName','dealNotes','systemKw','overrideDf','overrideMk','disputeNotes'].forEach(id => { if($(id)) $(id).value=''; });
+  selAdders = []; renderAdders(); renderSelAdders(); clearDisplay();
+}
+
+// ── LOG ──
+function saveToLog() {
+  const sub = parseFloat($('subtotal').value);
+  const pg  = parseFloat($('proposalGross').value);
+  const lender = $('lender').value, term = $('term').value, apr = $('apr').value;
+  const raw = findRawRate(lender, term, apr);
+  if (!raw || !isFinite(sub) || !isFinite(pg)) {
+    alert('Enter Contract Subtotal, Funded Amount, and select Lender/Term/APR before saving.'); return;
+  }
+  const overrideDfVal = $('overrideDf').value.trim();
+  const overrideMkVal = $('overrideMk').value.trim();
+  const df  = overrideDfVal !== '' ? parseFloat(overrideDfVal) : parseFloat(raw.dealerFee);
+  const mk  = overrideMkVal !== '' ? parseFloat(overrideMkVal) : getMarkup(raw, lender);
+  const eff = r2(df + mk);
+  const expG = r2(sub / (1 - eff/100));
+  const diff = r2(pg - expG);
+  const diffPct = r4((diff/expG)*100);
+  const sameAsSub = isFinite(sub) && sub>0 && pg===sub && eff>0;
+  const status = (diff===0 && !sameAsSub) ? 'RECONCILED' : Math.abs(diff)<1 ? 'DISCREPANCY (rounding)' : 'DISCREPANCY';
+  auditLog.unshift({
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    rep: $('repName').value||'—', deal: $('dealName').value||'—',
+    notes: $('disputeNotes').value||'',
+    lender, program:raw.program, term, apr, sub, pg, expG, df, mk, eff, diff, diffPct, status
+  });
+  if (auditLog.length > 100) auditLog.pop();
+  saveLogs(); renderLog();
+  alert(`Record saved — Status: ${status}`);
+}
+
+function renderLog() {
+  const tbody = $('logBody'); tbody.innerHTML = '';
+  $('logCount').textContent = auditLog.length ? `(${auditLog.length})` : '';
+  if (!auditLog.length) { tbody.innerHTML='<tr><td colspan="17" class="log-empty">No reconciliation records saved yet.</td></tr>'; return; }
+  auditLog.forEach(e => {
+    const tr = document.createElement('tr');
+    const pc = e.status==='RECONCILED' ? 'pill-ok' : 'pill-bad';
+    tr.innerHTML = `<td>${esc(e.date)}</td><td>${esc(e.rep)}</td><td>${esc(e.deal)}</td><td>${esc(e.lender)}</td><td>${esc(e.program)}</td><td class="tr">${e.term}</td><td class="tr">${parseFloat(e.apr).toFixed(2)}%</td><td class="tr mono">${fmtM(e.sub)}</td><td class="tr mono">${fmtM(e.pg)}</td><td class="tr mono">${fmtM(e.expG)}</td><td class="tr mono">${fmtM(e.diff)}</td><td class="tr mono">${fmtP4(e.diffPct)}</td><td class="tr mono">${fmtP(e.df)}</td><td class="tr mono">${fmtP(e.mk)}</td><td class="tr mono">${fmtP(e.eff)}</td><td><span class="pill ${pc}">${esc(e.status)}</span></td><td style="font-size:10px;color:var(--muted);max-width:200px;">${esc(e.notes||'')}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function clearLog() { if(!confirm('Clear all records?'))return; auditLog=[]; saveLogs(); renderLog(); }
+function exportLog() {
+  if (!auditLog.length) { alert('No entries to export.'); return; }
+  const hdr = ['Date','Rep','Deal','Lender','Program','Term','APR','ContractSubtotal','FundedAmount','ExpectedGross','Variance$','Variance%','DealerFee%','Markup%','EffFee%','Status','Notes'];
+  const rows = auditLog.map(e => [e.date,e.rep,e.deal,e.lender,e.program,e.term,e.apr,e.sub,e.pg,e.expG,e.diff,e.diffPct,e.df,e.mk,e.eff,e.status,e.notes||''].map(csvE).join(','));
+  dlBlob([hdr.join(','),...rows].join('\n'), 'fastrac_reconciliation_log.csv', 'text/csv');
+}
+
+// ── CSV ──
+function csvE(s) { const str=String(s??''); if(/[",\n]/.test(str)) return '"'+str.replace(/"/g,'""')+'"'; return str; }
+function exportCsv() {
+  const hdr = ['lender','program','term','apr','dealerFee','markup'];
+  const rows = rates.map(r => [csvE(r.lender),csvE(r.program),r.term,r.apr,r.dealerFee,r.markup].join(','));
+  dlBlob([hdr.join(','),...rows].join('\n'), 'fastrac_rates.csv', 'text/csv');
+}
+function dlTemplate() { dlBlob(`lender,program,term,apr,dealerFee,markup\nSungage,BrightStart,25,5.99,18.99,2.00\nGoodleap,Standard,20,5.99,20.99,2.01\n`, 'rates_template.csv', 'text/csv'); }
+function dlBlob(c,n,t) { const b=new Blob([c],{type:t}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download=n; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(u); }
+function parseCsv(text) {
+  const rows=[]; let cur=[],field='',inQ=false;
+  for(let i=0;i<text.length;i++){const ch=text[i];if(inQ){if(ch==='"'&&text[i+1]==='"'){field+='"';i++;}else if(ch==='"')inQ=false;else field+=ch;}else{if(ch==='"')inQ=true;else if(ch===','){cur.push(field);field='';}else if(ch==='\n'){cur.push(field);rows.push(cur);cur=[];field='';}else if(ch==='\r'){}else field+=ch;}}
+  cur.push(field);rows.push(cur);return rows.filter(r=>r.some(x=>String(x).trim()!==''));
+}
+function importCsv(file) {
+  const rd = new FileReader();
+  rd.onload = () => {
+    const rows = parseCsv(rd.result); if(!rows.length) return;
+    const head = rows[0].map(h => String(h).trim().toLowerCase());
+    const idx = n => head.indexOf(n);
+    if (!['lender','program','term','apr','dealerfee','markup'].every(k => idx(k)!==-1)) { alert('Invalid CSV headers.'); return; }
+    rates = rows.slice(1).map(r => ({
+      lender:   r[idx('lender')]||'',
+      program:  r[idx('program')]||'',
+      term:     parseFloat(r[idx('term')])||0,
+      apr:      parseFloat(r[idx('apr')])||0,
+      dealerFee:parseFloat(r[idx('dealerfee')])||0,
+      markup:   parseFloat(r[idx('markup')])||0,
+    }));
+    renderAll();
+  };
+  rd.readAsText(file);
+}
+
+async function copySum() {
+  const text = $('sumHint').textContent||'';
+  if (!text) { alert('Run a reconciliation first.'); return; }
+  try { await navigator.clipboard.writeText(text); alert('Copied.'); } catch { alert('Copy failed.'); }
+}
+
+function renderAll() { renderTable(); calc(); }
+
+document.addEventListener('keydown', e => { if(e.key==='Enter' && e.target.tagName==='INPUT' && !e.shiftKey) calc(); });
+
+// ── INIT ──
+loadRates(); loadLog();
+renderTable();
+renderAdders();
+renderLog();
 </script>
 </body>
 </html>
